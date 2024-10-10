@@ -213,3 +213,4 @@
 ```    
    ### Error Response:
    > 404 Not Found: 유저 ID를 찾을 수 없음
+   

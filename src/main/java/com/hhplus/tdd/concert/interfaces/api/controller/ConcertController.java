@@ -1,6 +1,6 @@
-package com.hhplus.tdd.concert.presentation.controller;
+package com.hhplus.tdd.concert.interfaces.api.controller;
 
-import com.hhplus.tdd.concert.presentation.response.*;
+import com.hhplus.tdd.concert.interfaces.api.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
