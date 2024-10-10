@@ -34,6 +34,7 @@ erDiagram
         INT seat_id PK 
         INT concert_date_id FK 
         INT seat_number 
+        INT seat_price
         STRING reserve_yn
     }
 
