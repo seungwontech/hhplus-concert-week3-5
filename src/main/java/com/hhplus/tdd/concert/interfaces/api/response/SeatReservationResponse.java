@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert.presentation.response;
+package com.hhplus.tdd.concert.interfaces.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

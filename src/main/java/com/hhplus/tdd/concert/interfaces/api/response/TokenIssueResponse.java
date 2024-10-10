@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert.presentation.response;
+package com.hhplus.tdd.concert.interfaces.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class TokenResponse {
+public class TokenIssueResponse {
     private Long userId;
     private String token;
     private LocalDateTime expiryTime;
