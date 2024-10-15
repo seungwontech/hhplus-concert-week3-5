@@ -10,7 +10,7 @@ erDiagram
     WAITING_QUEUE {
         INT queue_id PK "대기열 ID (Primary Key)"
         INT user_id FK "사용자 ID (Foreign Key)"
-        STRING token_value "토큰 값"
+        STRING token "토큰 값"
         DATETIME token_expiry "토큰 만료 시간"
         DATETIME token_created "토큰 생성 시간"
         STRING token_status "토큰 상태"
@@ -33,7 +33,7 @@ erDiagram
         INT schedule_id FK "일정 ID (Foreign Key)"
         INT seat_number "좌석 번호"
         INT seat_price "좌석 가격"
-        STRING is_reserved "예약 여부 (Y/N)"
+        STRING reserve_yn "예약 여부 (Y/N)"
     }
 
     CONCERT_RESERVATION {
