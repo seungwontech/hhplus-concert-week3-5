@@ -8,20 +8,15 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
-public class SeatReservationResponse {
-    private Long userId;
-    private String concertName;
+public class SeatRes {
+    private long concertId;
+    private long scheduleId;
     private List<seat> seats;
-    private int totalPrice;
 
-
-    @Getter
     @Builder
     public static class seat {
+        private long seatId;
         private int seatNumber;
-        private String status;
-        private int seatPrice;
+        private String reserveYn;
     }
-
 }

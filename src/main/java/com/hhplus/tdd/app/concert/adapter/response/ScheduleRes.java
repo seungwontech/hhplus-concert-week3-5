@@ -11,12 +11,12 @@ import java.util.List;
 @Getter
 @Builder
 public class ScheduleRes {
-    private Long concertId;
+    private long concertId;
     private List<schedule> schedules;
 
     @Builder
     public static class schedule {
-        private Long concertDateId;
+        private long concertDateId;
         private LocalDateTime scheduleAt;
     }
 }

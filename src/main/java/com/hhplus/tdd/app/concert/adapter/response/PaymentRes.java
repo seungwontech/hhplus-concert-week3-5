@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PaymentResponse {
-    private int amount;
-    private LocalDateTime paidAt;
-    private String status;
+public class PaymentRes {
+    private long paymentAmount;
+    private String paymentStatus;
+    private LocalDateTime paymentDate;
 }
