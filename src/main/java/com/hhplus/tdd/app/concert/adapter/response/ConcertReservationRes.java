@@ -1,6 +1,5 @@
-package com.hhplus.tdd.concert.interfaces.api.response;
+package com.hhplus.tdd.app.concert.adapter.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,20 +7,16 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
-public class SeatReservationResponse {
-    private Long userId;
+public class ConcertReservationRes {
+    private long userId;
     private String concertName;
     private List<seat> seats;
     private int totalPrice;
 
-
-    @Getter
     @Builder
     public static class seat {
         private int seatNumber;
         private String status;
         private int seatPrice;
     }
-
 }
