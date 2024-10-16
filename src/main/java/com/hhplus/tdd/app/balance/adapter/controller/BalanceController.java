@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class BalanceController {
 
     // 잔액 조회
-    @GetMapping("/{userId}/balance/")
+    @GetMapping("/balance/")
     public ResponseEntity<BalanceRes> balance(@RequestHeader("user-id") long userId){
 
         BalanceRes res = BalanceRes.builder()
@@ -23,7 +23,7 @@ public class BalanceController {
     }
 
     // 잔액 충전
-    @PatchMapping("/{userId}/balance/charge")
+    @PatchMapping("/balance/charge")
     public ResponseEntity<BalanceRes> charge(@RequestHeader("user-id") long userId, @RequestBody long chargeAmount) {
         BalanceRes res = BalanceRes.builder()
                 .userId(userId)
