@@ -1,7 +1,6 @@
-package com.hhplus.tdd.concert.interfaces.api.response;
+package com.hhplus.tdd.app.concert.adapter.response;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,15 +10,12 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
-public class ScheduleResponse {
+public class ScheduleRes {
     private Long concertId;
-    private List<concertSchedule> concertSchedules;
+    private List<schedule> schedules;
 
-
-    @Getter
     @Builder
-    public static class concertSchedule {
+    public static class schedule {
         private Long concertDateId;
         private LocalDateTime scheduleAt;
     }

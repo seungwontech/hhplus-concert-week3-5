@@ -1,6 +1,6 @@
-package com.hhplus.tdd.concert.interfaces.api.controller;
+package com.hhplus.tdd.app.concert.adapter.controller;
 
-import com.hhplus.tdd.concert.interfaces.api.response.*;
+import com.hhplus.tdd.app.concert.adapter.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +10,31 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/concert")
+@RequestMapping("/api/concerts")
 public class ConcertController {
+
+
+    // 예약 가능 날짜 조회 API
+    @GetMapping("/{concertId}/schedules/")
+    public ResponseEntity<ScheduleRes> ConcertSchedules(@PathVariable Long concertId) {
+        ScheduleRes res = ScheduleRes.builder()
+                .concertId(concertId)
+                .schedules(List.of(
+                        ScheduleRes.schedule.builder()
+                                .concertDateId(1L)
+                                .scheduleAt(LocalDateTime.parse("2024-10-10T10:00:00"))
+                                .build(),
+                        ScheduleRes.schedule.builder()
+                                .concertDateId(2L)
+                                .scheduleAt(LocalDateTime.parse("2024-10-10T10:10:10"))
+                                .build()
+                )).build();
+        return ResponseEntity.ok(res);
+    }
+
+    // 예약 가능 좌석 조회 API
+    @GetMapping("/{concertId}/schedules/{scheduleId}/seats")
+
 
     /**
      * 유저 토큰 발급 API
@@ -19,15 +42,17 @@ public class ConcertController {
      * @param userId
      * @return
      */
-    @PostMapping("/token/{userId}")
+    @PostMapping("/waiting-queue/{userId}")
     public ResponseEntity<TokenIssueResponse> issueToken(
             @PathVariable Long userId) {
+
         TokenIssueResponse response = TokenIssueResponse.builder()
                 .userId(1L)
                 .token("a1b2c3")
                 .expiryTime(LocalDateTime.now().plusMinutes(5L))
                 .createdAt(LocalDateTime.now())
                 .build();
+
         return ResponseEntity.ok(response);
     }
 
@@ -37,7 +62,7 @@ public class ConcertController {
      * @param userId
      * @return
      */
-    @GetMapping("/queue/token")
+    @GetMapping("/waiting-queue/{}")
     public ResponseEntity<TokenResponse> getToken(
             @RequestParam Long userId) {
         TokenResponse response = TokenResponse.builder()
@@ -55,7 +80,7 @@ public class ConcertController {
      * @param queueTokenId
      * @return
      */
-    @GetMapping("/queue/position")
+    @GetMapping("/waiting-queue/position")
     public ResponseEntity<QueuePositionResponse> getQueuePosition(
             @RequestParam Long queueTokenId) {
 
@@ -76,17 +101,17 @@ public class ConcertController {
      * @return
      */
     @GetMapping("/{concertId}/schedule/")
-    public ResponseEntity<ScheduleResponse> getConcertSchedules(
+    public ResponseEntity<ScheduleRes> getConcertSchedules(
             @RequestHeader("TOKEN") String token
             , @PathVariable Long concertId) {
-        ScheduleResponse response = ScheduleResponse.builder()
+        ScheduleRes response = ScheduleRes.builder()
                 .concertId(concertId)
                 .concertSchedules(List.of(
-                        ScheduleResponse.concertSchedule.builder()
+                        ScheduleRes.concertSchedule.builder()
                                 .concertDateId(1L)
                                 .scheduleAt(LocalDateTime.parse("2024-10-10T10:00:00"))
                                 .build(),
-                        ScheduleResponse.concertSchedule.builder()
+                        ScheduleRes.concertSchedule.builder()
                                 .concertDateId(2L)
                                 .scheduleAt(LocalDateTime.parse("2024-10-10T10:10:10"))
                                 .build()
@@ -130,12 +155,6 @@ public class ConcertController {
 
     /**
      * 좌석 예약
-     *
-     * @param token
-     * @param userId
-     * @param concertDateId
-     * @param seatIds
-     * @return
      */
     @PostMapping("/reservations")
     public ResponseEntity<SeatReservationResponse> createSeatReservation(

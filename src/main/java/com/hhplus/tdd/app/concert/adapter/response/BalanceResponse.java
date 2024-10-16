@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert.interfaces.api.response;
+package com.hhplus.tdd.app.concert.adapter.response;
 
 import lombok.Builder;
 import lombok.Getter;
