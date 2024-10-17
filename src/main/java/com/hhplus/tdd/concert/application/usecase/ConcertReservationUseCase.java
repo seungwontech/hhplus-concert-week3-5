@@ -31,8 +31,11 @@ public class ConcertReservationUseCase {
 
         concertService.saveReservations(reservations);
 
+        concertService.saveSeatReserved(concertId, concertScheduleId, reservationReq.getConcertSeatIds());
+
         return buildReservationResponse(concert, reservations, seatMap);
     }
+
 
     private Map<Long, ConcertSeat> createSeatMap(List<ConcertSeat> seats, Long[] concertSeatIds) {
         Map<Long, ConcertSeat> seatMap = new HashMap<>();
@@ -50,9 +53,7 @@ public class ConcertReservationUseCase {
     private List<ConcertReservation> reserveSeats(Long concertId, Long concertScheduleId, Long[] concertSeatIds, Long userId) {
         List<ConcertReservation> reservations = new ArrayList<>();
 
-        // 좌석 예약 로직 구현
         for (Long seatId : concertSeatIds) {
-            // 예: ConcertReservation 객체 생성
             ConcertReservation reservation = ConcertReservation.of(
                     null
                     , userId

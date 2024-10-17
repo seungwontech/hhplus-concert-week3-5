@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -169,7 +170,7 @@ public class ConcertServiceTest {
     }
 
     @Test
-    void 예약을저장해야한다() {
+    void 좌석예약_성공() {
         // given
         List<ConcertReservation> reservations = Arrays.asList(
                 new ConcertReservation(1L, 1L, 1L, 1L
@@ -190,5 +191,30 @@ public class ConcertServiceTest {
         // then
         verify(concertReservationRepository, times(1)).saveAll(reservations);
 
+    }
+
+
+    @Test
+    public void shouldUpdateSeatReservedYnToY() {
+        // given
+        Long concertId = 1L;
+        Long concertScheduleId = 1L;
+        Long[] concertSeatIds = {1L, 2L, 3L};
+
+        List<ConcertSeat> mockSeats = Arrays.asList(
+                new ConcertSeat(1L, concertScheduleId, concertId, 10, 100, "N"),
+                new ConcertSeat(2L, concertScheduleId, concertId, 11, 100, "N"),
+                new ConcertSeat(3L, concertScheduleId, concertId, 12, 100, "N")
+        );
+
+        given(concertSeatRepository.findByConcertIdAndConcertScheduleIdAndSeatIdIn(concertId, concertScheduleId, concertSeatIds))
+                .willReturn(mockSeats);
+
+        // when
+        concertService.saveSeatReserved(concertId, concertScheduleId, concertSeatIds);
+
+        for (ConcertSeat seat : mockSeats) {
+            assertEquals("Y", seat.updateReserveYn("Y").getReserveYn());
+        }
     }
 }

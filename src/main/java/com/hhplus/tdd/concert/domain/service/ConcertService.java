@@ -1,9 +1,6 @@
 package com.hhplus.tdd.concert.domain.service;
 
-import com.hhplus.tdd.concert.domain.model.Concert;
-import com.hhplus.tdd.concert.domain.model.ConcertReservation;
-import com.hhplus.tdd.concert.domain.model.ConcertSchedule;
-import com.hhplus.tdd.concert.domain.model.ConcertSeat;
+import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
@@ -13,6 +10,8 @@ import com.hhplus.tdd.concert.exception.ConcertException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -71,6 +70,33 @@ public class ConcertService {
 
     public void saveReservations(List<ConcertReservation> reservations) {
         concertReservationRepository.saveAll(reservations);
+    }
+
+
+    // 스케줄러 좌석에 대한 임시 배정 해지
+    public void deleteReservations() {
+        List<ConcertReservation> reservations = concertReservationRepository.findAll();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (ConcertReservation reservation : reservations) {
+            if (reservation.getReservationExpiry().isBefore(now)) {
+                reservation.updateCanceled(String.valueOf(ReservationStatus.CANCELED));
+            }
+        }
+
+        concertReservationRepository.saveAll(reservations);
+    }
+
+    public void saveSeatReserved(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
+        List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndSeatIdIn(concertId, concertScheduleId, concertSeatIds);
+
+        List<ConcertSeat> updateSeats = new ArrayList<>();
+        for (ConcertSeat seat : concertSeats) {
+            updateSeats.add(seat.updateReserveYn("Y"));
+        }
+
+        concertSeatRepository.saveAll(updateSeats);
     }
 
 }
