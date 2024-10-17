@@ -26,10 +26,17 @@ public class ConcertScheduleRepositoryImpl implements ConcertScheduleRepository 
     @Override
     public List<ConcertSchedule> getConcertSchedules(Long concertId) {
         List<ConcertScheduleJpaEntity> entities = concertScheduleJpaRepository.findByConcertId(concertId);
-        // 엔티티 리스트를 도메인 리스트로 변환
+
         return entities.stream()
                 .map(concertScheduleMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ConcertSchedule getConcertSchedule(Long concertId, Long concertScheduleId) {
+        ConcertScheduleJpaEntity entity = concertScheduleJpaRepository.findByConcertIdAndConcertScheduleId(concertId, concertScheduleId);
+
+        return concertScheduleMapper.toDomain(entity);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.hhplus.tdd.concert.presentation.controller;
 
 import com.hhplus.tdd.concert.application.usecase.GetAvailableConcertDatesUseCase;
+import com.hhplus.tdd.concert.application.usecase.GetAvailableSeatsUseCase;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
 import com.hhplus.tdd.concert.presentation.response.*;
@@ -17,28 +18,19 @@ import java.util.List;
 public class ConcertController {
 
     private final GetAvailableConcertDatesUseCase getAvailableConcertDatesUseCase;
+    private final GetAvailableSeatsUseCase getAvailableSeatsUseCase;
 
     // 예약 가능 날짜 조회 API
     @GetMapping("/{concertId}/schedules/")
     public ResponseEntity<ScheduleRes> concertSchedules(@PathVariable Long concertId) {
-
         ScheduleRes res= getAvailableConcertDatesUseCase.execute(concertId);
-
         return ResponseEntity.ok(res);
     }
 
     // 예약 가능 좌석 조회 API
     @GetMapping("/{concertId}/schedules/{concertScheduleId}/seats")
     public ResponseEntity<SeatRes> concertSeats(@PathVariable Long concertId, @PathVariable Long concertScheduleId) {
-        SeatRes res = SeatRes.builder()
-                .concertId(concertId)
-                .concertScheduleId(concertScheduleId)
-                .seats(List.of(
-                        SeatRes.seat.builder().concertSeatId(1L).seatNumber(1).reserveYn("N").build(),
-                        SeatRes.seat.builder().concertSeatId(1L).seatNumber(2).reserveYn("N").build()
-                ))
-                .build();
-
+        SeatRes res = getAvailableSeatsUseCase.execute(concertId, concertScheduleId);
         return ResponseEntity.ok(res);
     }
 

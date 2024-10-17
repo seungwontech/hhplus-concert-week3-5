@@ -12,7 +12,8 @@ public enum ConcertErrorResult {
     CONCERT_SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "콘서트 좌석을 찾을 수 없습니다."),
     CONCERT_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "콘서트의 일정이 없습니다."),
 
-    CONCERT_SCHEDULE_AVAILABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "콘서트 예약 가능한 일정이 없습니다.");
+    CONCERT_SCHEDULE_AVAILABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "콘서트 예약 가능한 일정이 없습니다."),
+    CONCERT_SEAT_AVAILABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "콘서트 예약 가능한 좌석이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

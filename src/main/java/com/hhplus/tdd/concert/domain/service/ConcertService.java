@@ -48,4 +48,21 @@ public class ConcertService {
         return seats;
     }
 
+
+    public ConcertSchedule getConcertSchedule(Long concertId, Long concertScheduleId) {
+        ConcertSchedule schedule = concertScheduleRepository.getConcertSchedule(concertId, concertScheduleId);
+        if (schedule == null) {
+            throw new ConcertException(ConcertErrorResult.CONCERT_SCHEDULE_NOT_FOUND);
+        }
+        return schedule;
+    }
+
+
+    public List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId) {
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsBySchedule(concertId, concertScheduleId);
+        if (seats == null) {
+            throw new ConcertException(ConcertErrorResult.CONCERT_SEAT_NOT_FOUND);
+        }
+        return seats;
+    }
 }

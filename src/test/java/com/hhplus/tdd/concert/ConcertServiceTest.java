@@ -88,6 +88,24 @@ public class ConcertServiceTest {
     }
 
     @Test
+    public void 콘서트날짜상세조회_성공() {
+        // Given
+        Long concertId = 1L;
+        Long concertScheduleId = 1L;
+        ConcertSchedule expectedSchedule = ConcertSchedule.of(concertScheduleId, concertId, LocalDateTime.of(2024, 10, 21, 19, 0), 100);
+        doReturn(expectedSchedule).when(concertScheduleRepository).getConcertSchedule(concertId, concertScheduleId);
+
+        // When
+        ConcertSchedule result = concertService.getConcertSchedule(concertId, concertScheduleId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(expectedSchedule.getConcertId(), result.getConcertId());
+        assertEquals(expectedSchedule.getConcertScheduleId(), result.getConcertScheduleId());
+
+    }
+
+    @Test
     public void 콘서트날짜조회_실패_일정없음() {
         // Given
         Long concertId = 1L;
@@ -128,4 +146,23 @@ public class ConcertServiceTest {
         });
         assertEquals(ConcertErrorResult.CONCERT_SEAT_NOT_FOUND, exception.getErrorResult());
     }
+
+    @Test
+    public void 콘서트해당날짜의좌석조회_성공() {
+        Long concertScheduleId = 1L;
+        Long concertId = 1L;
+        List<ConcertSeat> expectedSeats = List.of(
+                ConcertSeat.of(1L, concertScheduleId, concertId, 1, 2000, "N"),
+                ConcertSeat.of(2L, concertScheduleId, concertId, 2, 2000, "Y")
+        );
+        doReturn(expectedSeats).when(concertSeatRepository).getConcertSeatsBySchedule(concertId, concertScheduleId);
+
+        List<ConcertSeat> result = concertService.getConcertSeatsBySchedule(concertId, concertScheduleId);
+
+        assertNotNull(result);
+        assertEquals(expectedSeats.size(), result.size());
+        assertEquals(expectedSeats.get(0).getConcertSeatId(), result.get(0).getConcertSeatId());
+        assertEquals(expectedSeats.get(1).getConcertSeatId(), result.get(1).getConcertSeatId());
+    }
+
 }
