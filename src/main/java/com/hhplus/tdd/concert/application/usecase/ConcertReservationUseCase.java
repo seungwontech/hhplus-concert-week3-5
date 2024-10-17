@@ -20,7 +20,6 @@ public class ConcertReservationUseCase {
     private final ConcertService concertService;
 
     public ConcertReservationRes execute(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
-
         Concert concert = concertService.getConcert(concertId);
 
         List<ConcertSeat> seats = concertService.getConcertSeatsBySchedule(concertId, concertScheduleId);

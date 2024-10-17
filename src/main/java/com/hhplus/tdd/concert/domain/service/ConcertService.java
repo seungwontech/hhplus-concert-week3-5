@@ -1,10 +1,7 @@
 package com.hhplus.tdd.concert.domain.service;
 
 import com.hhplus.tdd.concert.domain.model.*;
-import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
-import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
-import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
-import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
+import com.hhplus.tdd.concert.domain.repository.*;
 import com.hhplus.tdd.concert.exception.ConcertErrorResult;
 import com.hhplus.tdd.concert.exception.ConcertException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,7 @@ public class ConcertService {
     private final ConcertScheduleRepository concertScheduleRepository;
     private final ConcertSeatRepository concertSeatRepository;
     private final ConcertReservationRepository concertReservationRepository;
+    private final ConcertPaymentRepository concertPaymentRepository;
 
     // 콘서트 조회
     public Concert getConcert(Long concertId) {
@@ -99,4 +97,13 @@ public class ConcertService {
         concertSeatRepository.saveAll(updateSeats);
     }
 
+
+    public void saveConcertPayments(List<ConcertPayment> concertPayments) {
+        concertPaymentRepository.saveAll(concertPayments);
+    }
+
+    public List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds) {
+        return concertSeatRepository.getConcertSeatIdIn(concertSeatIds);
+    }
 }
+

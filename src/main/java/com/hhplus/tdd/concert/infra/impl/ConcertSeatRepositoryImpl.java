@@ -50,4 +50,18 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
                 .toList();
         concertSeatJpaRepository.saveAll(entities);
     }
+
+    @Override
+    public int findPriceByReservationId(Long reservationId) {
+        return concertSeatJpaRepository.findPriceByReservationId(reservationId);
+    }
+
+    @Override
+    public List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds) {
+        List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertSeatIdIn(concertSeatIds);
+
+        return entities.stream()
+                .map(concertSeatMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }
