@@ -1,8 +1,9 @@
-package com.hhplus.tdd.app.concert.adapter.controller;
+package com.hhplus.tdd.concert.presentation.controller;
 
-import com.hhplus.tdd.app.concert.adapter.request.ConcertPaymentReq;
-import com.hhplus.tdd.app.concert.adapter.request.ConcertReservationReq;
-import com.hhplus.tdd.app.concert.adapter.response.*;
+import com.hhplus.tdd.concert.application.usecase.GetAvailableConcertDatesUseCase;
+import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
+import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
+import com.hhplus.tdd.concert.presentation.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,34 +16,26 @@ import java.util.List;
 @RequestMapping("/api/concerts")
 public class ConcertController {
 
+    private final GetAvailableConcertDatesUseCase getAvailableConcertDatesUseCase;
 
     // 예약 가능 날짜 조회 API
     @GetMapping("/{concertId}/schedules/")
-    public ResponseEntity<ScheduleRes> concertSchedules(@PathVariable long concertId) {
-        ScheduleRes res = ScheduleRes.builder()
-                .concertId(concertId)
-                .schedules(List.of(
-                        ScheduleRes.schedule.builder()
-                                .concertDateId(1L)
-                                .scheduleAt(LocalDateTime.parse("2024-10-10T10:00:00"))
-                                .build(),
-                        ScheduleRes.schedule.builder()
-                                .concertDateId(2L)
-                                .scheduleAt(LocalDateTime.parse("2024-10-10T10:10:10"))
-                                .build()
-                )).build();
+    public ResponseEntity<ScheduleRes> concertSchedules(@PathVariable Long concertId) {
+
+        ScheduleRes res= getAvailableConcertDatesUseCase.execute(concertId);
+
         return ResponseEntity.ok(res);
     }
 
     // 예약 가능 좌석 조회 API
     @GetMapping("/{concertId}/schedules/{concertScheduleId}/seats")
-    public ResponseEntity<SeatRes> concertSeats(@PathVariable long concertId, @PathVariable long concertScheduleId) {
+    public ResponseEntity<SeatRes> concertSeats(@PathVariable Long concertId, @PathVariable Long concertScheduleId) {
         SeatRes res = SeatRes.builder()
                 .concertId(concertId)
-                .scheduleId(concertScheduleId)
+                .concertScheduleId(concertScheduleId)
                 .seats(List.of(
-                        SeatRes.seat.builder().seatId(1L).seatNumber(1).reserveYn("N").build(),
-                        SeatRes.seat.builder().seatId(1L).seatNumber(2).reserveYn("N").build()
+                        SeatRes.seat.builder().concertSeatId(1L).seatNumber(1).reserveYn("N").build(),
+                        SeatRes.seat.builder().concertSeatId(1L).seatNumber(2).reserveYn("N").build()
                 ))
                 .build();
 
@@ -53,8 +46,8 @@ public class ConcertController {
     @PostMapping("/{concertId}/schedules/{concertScheduleId}/seats/reservation")
     public ResponseEntity<ConcertReservationRes> concertReservation(
             @RequestHeader("token") String token
-            , @PathVariable long concertId
-            , @PathVariable long concertScheduleId
+            , @PathVariable Long concertId
+            , @PathVariable Long concertScheduleId
             , @RequestBody ConcertReservationReq concertReservationReq){
 
         ConcertReservationRes res = ConcertReservationRes.builder()
@@ -80,7 +73,7 @@ public class ConcertController {
     @PostMapping("/{concertId}/schedules/{concertScheduleId}/seats/reservation/payment")
     public ResponseEntity<PaymentRes> concertPayment (
             @RequestHeader("Token") String token
-            , @PathVariable long concertId
+            , @PathVariable Long concertId
             , @RequestBody ConcertPaymentReq concertPaymentReq) {
 
         PaymentRes res = PaymentRes.builder()

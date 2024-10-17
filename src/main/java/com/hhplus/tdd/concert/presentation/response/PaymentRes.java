@@ -1,4 +1,4 @@
-package com.hhplus.tdd.app.concert.adapter.response;
+package com.hhplus.tdd.concert.presentation.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class PaymentRes {
-    private long paymentAmount;
+    private int paymentAmount;
     private String paymentStatus;
     private LocalDateTime paymentDate;
 }

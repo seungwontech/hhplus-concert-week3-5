@@ -1,4 +1,4 @@
-package com.hhplus.tdd.app.concert.adapter.response;
+package com.hhplus.tdd.concert.presentation.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Builder
 public class ConcertReservationRes {
-    private long userId;
+    private Long userId;
     private String concertName;
     private List<seat> seats;
     private int totalPrice;
