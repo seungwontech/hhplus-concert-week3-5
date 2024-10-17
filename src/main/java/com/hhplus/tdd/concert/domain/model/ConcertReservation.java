@@ -17,8 +17,10 @@ public class ConcertReservation {
     private Long concertSeatId;        // 콘서트 좌석 ID
     private String reservationStatus;  // 예약 상태 (예약완료, 예약대기, 예약취소)
     private LocalDateTime reservationDate; // 예약 날짜
+    private LocalDateTime reservationExpiry; // 예약 날짜
 
-    public static ConcertReservation of(Long concertReservationId, Long userId, Long concertScheduleId, Long concertSeatId, String reservationStatus, LocalDateTime reservationDate) {
-        return new ConcertReservation(concertReservationId, userId, concertScheduleId, concertSeatId, reservationStatus, reservationDate);
+    public static ConcertReservation of(Long concertReservationId, Long userId, Long concertScheduleId, Long concertSeatId, String reservationStatus, LocalDateTime reservationDate, LocalDateTime reservationExpiry) {
+        return new ConcertReservation(concertReservationId, userId, concertScheduleId, concertSeatId, reservationStatus, reservationDate, reservationExpiry);
     }
+
 }

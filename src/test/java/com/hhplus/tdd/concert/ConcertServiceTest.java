@@ -1,14 +1,13 @@
 package com.hhplus.tdd.concert;
 
-import com.hhplus.tdd.concert.exception.ConcertErrorResult;
-import com.hhplus.tdd.concert.exception.ConcertException;
-import com.hhplus.tdd.concert.domain.model.Concert;
-import com.hhplus.tdd.concert.domain.model.ConcertSchedule;
-import com.hhplus.tdd.concert.domain.model.ConcertSeat;
+import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
+import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.domain.service.ConcertService;
+import com.hhplus.tdd.concert.exception.ConcertErrorResult;
+import com.hhplus.tdd.concert.exception.ConcertException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,11 +15,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ConcertServiceTest {
@@ -36,6 +36,9 @@ public class ConcertServiceTest {
 
     @Mock
     private ConcertSeatRepository concertSeatRepository;
+
+    @Mock
+    private ConcertReservationRepository concertReservationRepository;
 
 
     @Test
@@ -165,4 +168,27 @@ public class ConcertServiceTest {
         assertEquals(expectedSeats.get(1).getConcertSeatId(), result.get(1).getConcertSeatId());
     }
 
+    @Test
+    void 예약을저장해야한다() {
+        // given
+        List<ConcertReservation> reservations = Arrays.asList(
+                new ConcertReservation(1L, 1L, 1L, 1L
+                        , String.valueOf(ReservationStatus.WAITING)
+                        , LocalDateTime.now()
+                        , LocalDateTime.now().plusMinutes(5)),
+                new ConcertReservation(2L, 1L, 1L, 2L
+                        , String.valueOf(ReservationStatus.WAITING)
+                        , LocalDateTime.now()
+                        , LocalDateTime.now().plusMinutes(5))
+        );
+
+        // when
+        doNothing().when(concertReservationRepository).saveAll(reservations);
+
+        concertService.saveReservations(reservations);
+
+        // then
+        verify(concertReservationRepository, times(1)).saveAll(reservations);
+
+    }
 }

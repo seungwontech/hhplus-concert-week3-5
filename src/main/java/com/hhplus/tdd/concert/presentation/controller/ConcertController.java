@@ -1,16 +1,19 @@
 package com.hhplus.tdd.concert.presentation.controller;
 
+import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.application.usecase.GetAvailableConcertDatesUseCase;
 import com.hhplus.tdd.concert.application.usecase.GetAvailableSeatsUseCase;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
-import com.hhplus.tdd.concert.presentation.response.*;
+import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
+import com.hhplus.tdd.concert.presentation.response.PaymentRes;
+import com.hhplus.tdd.concert.presentation.response.ScheduleRes;
+import com.hhplus.tdd.concert.presentation.response.SeatRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,11 +22,12 @@ public class ConcertController {
 
     private final GetAvailableConcertDatesUseCase getAvailableConcertDatesUseCase;
     private final GetAvailableSeatsUseCase getAvailableSeatsUseCase;
+    private final ConcertReservationUseCase concertReservationUseCase;
 
     // 예약 가능 날짜 조회 API
     @GetMapping("/{concertId}/schedules/")
     public ResponseEntity<ScheduleRes> concertSchedules(@PathVariable Long concertId) {
-        ScheduleRes res= getAvailableConcertDatesUseCase.execute(concertId);
+        ScheduleRes res = getAvailableConcertDatesUseCase.execute(concertId);
         return ResponseEntity.ok(res);
     }
 
@@ -40,30 +44,30 @@ public class ConcertController {
             @RequestHeader("token") String token
             , @PathVariable Long concertId
             , @PathVariable Long concertScheduleId
-            , @RequestBody ConcertReservationReq concertReservationReq){
-
-        ConcertReservationRes res = ConcertReservationRes.builder()
-                .userId(1L)
-                .concertName("임영웅가을콘서트")
-                .totalPrice(4000)
-                .seats(List.of(
-                        ConcertReservationRes.seat.builder()
-                                .seatNumber(1)
-                                .status("예약완료")
-                                .seatPrice(2000)
-                                .build(),
-                        ConcertReservationRes.seat.builder()
-                                .seatNumber(2)
-                                .status("예약완료")
-                                .seatPrice(2000)
-                                .build()))
-                .build();
+            , @RequestBody ConcertReservationReq concertReservationReq) {
+        ConcertReservationRes res = concertReservationUseCase.execute(concertId, concertScheduleId, concertReservationReq);
+//        ConcertReservationRes res = ConcertReservationRes.builder()
+//                .userId(1L)
+//                .concertName("임영웅가을콘서트")
+//                .totalPrice(4000)
+//                .seats(List.of(
+//                        ConcertReservationRes.seat.builder()
+//                                .seatNumber(1)
+//                                .status("예약완료")
+//                                .seatPrice(2000)
+//                                .build(),
+//                        ConcertReservationRes.seat.builder()
+//                                .seatNumber(2)
+//                                .status("예약완료")
+//                                .seatPrice(2000)
+//                                .build()))
+//                .build();
         return ResponseEntity.ok(res);
     }
 
     // 콘서트 결제 API
     @PostMapping("/{concertId}/schedules/{concertScheduleId}/seats/reservation/payment")
-    public ResponseEntity<PaymentRes> concertPayment (
+    public ResponseEntity<PaymentRes> concertPayment(
             @RequestHeader("Token") String token
             , @PathVariable Long concertId
             , @RequestBody ConcertPaymentReq concertPaymentReq) {

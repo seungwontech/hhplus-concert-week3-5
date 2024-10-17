@@ -5,5 +5,5 @@ import lombok.Getter;
 @Getter
 public class ConcertPaymentReq {
     private Long userId;
-    private Long[] concert_reservation_id;
+    private Long[] concertReservationId;
 }

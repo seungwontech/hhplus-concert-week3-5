@@ -1,13 +1,15 @@
 package com.hhplus.tdd.concert.domain.service;
 
-import com.hhplus.tdd.concert.exception.ConcertErrorResult;
-import com.hhplus.tdd.concert.exception.ConcertException;
 import com.hhplus.tdd.concert.domain.model.Concert;
+import com.hhplus.tdd.concert.domain.model.ConcertReservation;
 import com.hhplus.tdd.concert.domain.model.ConcertSchedule;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
+import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
+import com.hhplus.tdd.concert.exception.ConcertErrorResult;
+import com.hhplus.tdd.concert.exception.ConcertException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertScheduleRepository concertScheduleRepository;
     private final ConcertSeatRepository concertSeatRepository;
+    private final ConcertReservationRepository concertReservationRepository;
 
     // 콘서트 조회
     public Concert getConcert(Long concertId) {
@@ -65,4 +68,9 @@ public class ConcertService {
         }
         return seats;
     }
+
+    public void saveReservations(List<ConcertReservation> reservations) {
+        concertReservationRepository.saveAll(reservations);
+    }
+
 }
