@@ -2,10 +2,10 @@ package com.hhplus.tdd.concert.application.usecase;
 
 import com.hhplus.tdd.concert.domain.model.ConcertPayment;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
-import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.service.ConcertService;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.response.PaymentRes;
+import com.hhplus.tdd.waitingqueue.domain.service.WaitingQueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +16,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ConcertPaymentUseCase {
-    private final ConcertPaymentRepository concertPaymentRepository;
     private final ConcertService concertService;
+    private final WaitingQueueService waitingQueueService;
 
-    public PaymentRes processConcertPayment(Long concertId, ConcertPaymentReq paymentReq) {
+    public PaymentRes processConcertPayment(String token, Long concertId, ConcertPaymentReq paymentReq) {
         Long userId = paymentReq.getUserId();
         Long[] concertReservationIds = paymentReq.getConcertReservationId();
         Long[] concertSeatIds = paymentReq.getConcertSeatIds();
@@ -49,7 +49,7 @@ public class ConcertPaymentUseCase {
         }
 
         concertService.saveConcertPayments(concertPayments);
-
+        waitingQueueService.expiredWaitingQueue(token);
         // 결제 응답 DTO 생성
         return PaymentRes.of(concertSeats.get(0).getSeatPrice() * concertSeats.size(), paymentStatus, paymentDate);
     }

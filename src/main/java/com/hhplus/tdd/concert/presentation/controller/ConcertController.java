@@ -55,7 +55,7 @@ public class ConcertController {
             @RequestHeader("Token") String token
             , @PathVariable Long concertId
             , @RequestBody ConcertPaymentReq concertPaymentReq) {
-        PaymentRes res = concertPaymentUseCase.processConcertPayment(concertId, concertPaymentReq);
+        PaymentRes res = concertPaymentUseCase.processConcertPayment(token, concertId, concertPaymentReq);
 
         return ResponseEntity.ok(res);
 

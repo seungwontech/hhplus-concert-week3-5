@@ -5,6 +5,7 @@ import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.service.ConcertService;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.response.PaymentRes;
+import com.hhplus.tdd.waitingqueue.domain.service.WaitingQueueService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,13 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class ConcertPaymentUseCaseTest {
 
     @Mock
     private ConcertService concertService;
+
+    @Mock
+    private WaitingQueueService waitingQueueService;
 
     @InjectMocks
     private ConcertPaymentUseCase concertPaymentUseCase;
@@ -33,6 +35,7 @@ public class ConcertPaymentUseCaseTest {
     void testProcessConcertPayment_Success() {
         Long concertId = 1L;
         Long userId = 1L;
+        String token = "a1as2s3d";
         Long[] concertReservationIds = {1L, 2L};
         Long[] concertSeatIds = {10L, 20L};
 
@@ -45,7 +48,7 @@ public class ConcertPaymentUseCaseTest {
 
         when(concertService.getConcertSeatIdIn(concertSeatIds)).thenReturn(concertSeats);
 
-        PaymentRes paymentRes = concertPaymentUseCase.processConcertPayment(concertId, paymentReq);
+        PaymentRes paymentRes = concertPaymentUseCase.processConcertPayment(token, concertId, paymentReq);
 
         verify(concertService, times(1)).saveConcertPayments(any()); // 결제 정보 저장 확인
         assertEquals(200, paymentRes.getPaymentAmount()); // 총 금액 확인 (10000 * 2)
