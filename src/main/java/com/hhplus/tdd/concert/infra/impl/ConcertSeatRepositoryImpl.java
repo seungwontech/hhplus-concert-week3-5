@@ -52,11 +52,6 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     }
 
     @Override
-    public int findPriceByReservationId(Long reservationId) {
-        return concertSeatJpaRepository.findPriceByReservationId(reservationId);
-    }
-
-    @Override
     public List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertSeatIdIn(concertSeatIds);
 

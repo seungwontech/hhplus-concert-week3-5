@@ -11,7 +11,5 @@ public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeatJpaEn
 
     List<ConcertSeatJpaEntity> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 
-    int findPriceByReservationId(Long reservationId);
-
     List<ConcertSeatJpaEntity> findByConcertSeatIdIn(Long[] concertSeatIds);
 }

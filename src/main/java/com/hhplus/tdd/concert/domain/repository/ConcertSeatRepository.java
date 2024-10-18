@@ -14,7 +14,5 @@ public interface ConcertSeatRepository {
 
     void saveAll(List<ConcertSeat> concertSeats);
 
-    int findPriceByReservationId(Long reservationId);
-
     List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds);
 }
