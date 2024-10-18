@@ -36,8 +36,8 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     }
 
     @Override
-    public List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
-        List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertIdAndConcerScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
+    public List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
+        List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
                 .collect(Collectors.toList());

@@ -87,7 +87,7 @@ public class ConcertService {
     }
 
     public void saveSeatReserved(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
-        List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndSeatIdIn(concertId, concertScheduleId, concertSeatIds);
+        List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
 
         List<ConcertSeat> updateSeats = new ArrayList<>();
         for (ConcertSeat seat : concertSeats) {

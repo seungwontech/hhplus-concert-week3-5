@@ -10,7 +10,7 @@ public interface ConcertSeatRepository {
 
     List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId);
 
-    List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
+    List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 
     void saveAll(List<ConcertSeat> concertSeats);
 

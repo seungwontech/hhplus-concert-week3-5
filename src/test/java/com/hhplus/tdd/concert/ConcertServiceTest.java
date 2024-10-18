@@ -207,7 +207,7 @@ public class ConcertServiceTest {
                 new ConcertSeat(3L, concertScheduleId, concertId, 12, 100, "N")
         );
 
-        given(concertSeatRepository.findByConcertIdAndConcertScheduleIdAndSeatIdIn(concertId, concertScheduleId, concertSeatIds))
+        given(concertSeatRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds))
                 .willReturn(mockSeats);
 
         // when

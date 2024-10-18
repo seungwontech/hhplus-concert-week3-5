@@ -9,7 +9,7 @@ public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeatJpaEn
     List<ConcertSeatJpaEntity> findByConcertId(Long concertId);
     List<ConcertSeatJpaEntity> findByConcertIdAndConcertScheduleId(Long concertId, Long concertScheduleId);
 
-    List<ConcertSeatJpaEntity> findByConcertIdAndConcerScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
+    List<ConcertSeatJpaEntity> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 
     int findPriceByReservationId(Long reservationId);
 
