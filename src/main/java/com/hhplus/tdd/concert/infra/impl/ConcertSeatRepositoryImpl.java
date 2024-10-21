@@ -22,14 +22,16 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     @Override
     public List<ConcertSeat> getConcertSeats(Long concertId) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertId(concertId);
+
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId) {
-        List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertIdAndConcertScheduleId(concertId, concertScheduleId);
+    public List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId, String reserveYn) {
+
+        List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertIdAndConcertScheduleIdAndReserveYn(concertId, concertScheduleId, reserveYn);
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
                 .collect(Collectors.toList());
