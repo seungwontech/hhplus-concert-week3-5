@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "PAYMENT")
-public class PaymentJpaEntity {
+public class ConcertPaymentJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId; // 결제 ID
@@ -29,8 +29,8 @@ public class PaymentJpaEntity {
     @Column(nullable = false)
     private LocalDateTime paymentDate; // 결제 날짜
 
-    public static PaymentJpaEntity of(Long userId, Long concertReservationId, int paymentAmount, String paymentStatus, LocalDateTime paymentDate) {
-        PaymentJpaEntity concertPayment = new PaymentJpaEntity();
+    public static ConcertPaymentJpaEntity of(Long userId, Long concertReservationId, int paymentAmount, String paymentStatus, LocalDateTime paymentDate) {
+        ConcertPaymentJpaEntity concertPayment = new ConcertPaymentJpaEntity();
         concertPayment.userId = userId;
         concertPayment.concertReservationId = concertReservationId;
         concertPayment.paymentAmount = paymentAmount;
