@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert;
+package com.hhplus.tdd.concert.unit;
 
 import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.domain.model.Concert;
