@@ -3,6 +3,7 @@ package com.hhplus.tdd.concert.infra.impl;
 import com.hhplus.tdd.concert.domain.model.Concert;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.infra.ConcertJpaRepository;
+import com.hhplus.tdd.concert.infra.entity.ConcertJpaEntity;
 import com.hhplus.tdd.concert.infra.mapper.ConcertMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
         return concertJpaRepository.findById(concertId)
                 .map(concertMapper::toDomain).orElse(null);
+    }
+
+    @Override
+    public void save(Concert concert) {
+        ConcertJpaEntity entity = concertMapper.toEntity(concert);
+        concertJpaRepository.save(entity);
     }
 }

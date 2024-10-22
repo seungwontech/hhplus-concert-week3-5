@@ -9,4 +9,6 @@ public interface ConcertScheduleRepository {
     List<ConcertSchedule> getConcertSchedules(Long concertId);
 
     ConcertSchedule getConcertSchedule(Long concertId, Long concertScheduleId);
+
+    void saveAll(List<ConcertSchedule> schedules);
 }
