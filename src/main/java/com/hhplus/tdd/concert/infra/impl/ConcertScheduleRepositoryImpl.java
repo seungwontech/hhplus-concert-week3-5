@@ -35,4 +35,12 @@ public class ConcertScheduleRepositoryImpl implements ConcertScheduleRepository 
         return concertScheduleMapper.toDomain(entity);
     }
 
+    @Override
+    public void saveAll(List<ConcertSchedule> schedules) {
+        List<ConcertScheduleJpaEntity> entities = schedules.stream()
+                .map(concertScheduleMapper::toEntity)
+                .toList();
+        concertScheduleJpaRepository.saveAll(entities);
+    }
+
 }

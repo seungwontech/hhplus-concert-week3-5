@@ -1,15 +1,13 @@
 package com.hhplus.tdd.waitingqueue.domain.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
+@Setter
 public class WaitingQueue {
     private Long queueId;           // 대기열 ID
     private Long userId;            // 사용자 ID

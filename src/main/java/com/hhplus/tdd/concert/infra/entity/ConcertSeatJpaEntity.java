@@ -14,21 +14,22 @@ import lombok.NoArgsConstructor;
 public class ConcertSeatJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "concert_seat_id")
     private Long concertSeatId; // 콘서트 좌석 ID
 
-    @Column(nullable = false)
+    @Column(name = "concert_schedule_id", nullable = false)
     private Long concertScheduleId; // 콘서트 일정 ID
 
-    @Column(nullable = false)
+    @Column(name = "concert_id", nullable = false)
     private Long concertId;
 
-    @Column(nullable = false)
+    @Column(name = "seat_number", nullable = false)
     private int seatNumber; // 좌석 번호
 
-    @Column(nullable = false)
+    @Column(name = "seat_price", nullable = false)
     private int seatPrice; // 좌석 가격
 
-    @Column(nullable = false)
+    @Column(name = "reserve_yn", nullable = false)
     private String reserveYn; // 예약 여부 (Y/N)
 
     public static ConcertSeatJpaEntity of(Long concertSeatId, Long concertScheduleId, Long concertId, int seatNumber, int seatPrice, String reserveYn) {

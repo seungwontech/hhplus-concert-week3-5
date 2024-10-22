@@ -8,7 +8,7 @@ public interface ConcertSeatRepository {
 
     List<ConcertSeat> getConcertSeats(Long concertId);
 
-    List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId);
+    List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId, String reserveYn);
 
     List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 

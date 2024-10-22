@@ -16,15 +16,16 @@ import java.time.LocalDateTime;
 public class ConcertScheduleJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="concert_schedule_id")
     private Long concertScheduleId;
 
-    @Column(nullable = false)
+    @Column(name = "concert_id", nullable = false)
     private Long concertId;
 
-    @Column(nullable = false)
+    @Column(name = "concert_date", nullable = false)
     private LocalDateTime concertDate;
 
-    @Column(nullable = false)
+    @Column(name = "total_seats", nullable = false)
     private int totalSeats;
 
     public static ConcertScheduleJpaEntity of(Long concertScheduleId, Long concertId, LocalDateTime concertDate, int totalSeats) {

@@ -16,15 +16,16 @@ import java.time.LocalDateTime;
 public class BalanceJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "balance_id")
     private Long balanceId;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(name = "balance_amount", nullable = false)
     private int balanceAmount;
 
-    @Column(nullable = false)
+    @Column(name = "balance_updated", nullable = false)
     private LocalDateTime balanceUpdated;
 
     public static BalanceJpaEntity of(Long balanceId, Long userId, int balanceAmount, LocalDateTime balanceUpdated) {
