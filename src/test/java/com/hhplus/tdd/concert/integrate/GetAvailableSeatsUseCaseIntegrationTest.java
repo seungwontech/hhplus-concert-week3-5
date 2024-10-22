@@ -17,14 +17,14 @@ public class GetAvailableSeatsUseCaseIntegrationTest {
 
     @Test
     void testExecuteSuccess() {
-        // given: 콘서트 ID와 일정 ID
+        // given
         Long concertId = 1L;
         Long concertScheduleId = 1L;
 
-        // when: 유스케이스 실행
+        // when
         SeatRes response = getAvailableSeatsUseCase.execute(concertId, concertScheduleId);
 
-        // then: 좌석 정보가 정확히 반환되는지 검증
+        // then
         assertThat(response.getConcertId()).isEqualTo(concertId);
         assertThat(response.getConcertScheduleId()).isEqualTo(concertScheduleId);
         assertThat(response.getSeats()).isNotEmpty();
