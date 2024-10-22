@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ConcertPaymentRepository {
     void saveAll(List<ConcertPayment> concertPayments);
+
+    List<ConcertPayment> findAll();
 }

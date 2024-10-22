@@ -8,6 +8,23 @@ import org.springframework.stereotype.Component;
 public class ConcertPaymentMapper {
 
     public ConcertPaymentJpaEntity toEntity(ConcertPayment concertPayment) {
-        return null;
+        return ConcertPaymentJpaEntity.of(
+                concertPayment.getUserId(),
+                concertPayment.getConcertReservationId(),
+                concertPayment.getPaymentAmount(),
+                concertPayment.getPaymentStatus(),
+                concertPayment.getPaymentDate()
+        );
+    }
+
+    public ConcertPayment toDomain(ConcertPaymentJpaEntity concertPaymentJpaEntity) {
+        return ConcertPayment.of(
+                concertPaymentJpaEntity.getPaymentId(),
+                concertPaymentJpaEntity.getUserId(),
+                concertPaymentJpaEntity.getConcertReservationId(),
+                concertPaymentJpaEntity.getPaymentAmount(),
+                concertPaymentJpaEntity.getPaymentStatus(),
+                concertPaymentJpaEntity.getPaymentDate()
+        );
     }
 }

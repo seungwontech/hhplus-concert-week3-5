@@ -101,14 +101,7 @@ public class ConcertPaymentUseCase {
 
     public void expiredWaitingQueue(String token) {
         WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(token);
-
-        waitingQueue.of(
-                waitingQueue.getQueueId()
-                , waitingQueue.getUserId()
-                , waitingQueue.getToken()
-                , waitingQueue.getTokenExpiry()
-                , waitingQueue.getTokenCreated()
-                , WaitingQueueStatus.EXPIRED.toString());
+        waitingQueue.setTokenStatus(WaitingQueueStatus.EXPIRED.toString());
         waitingQueueRepository.save(waitingQueue);
     }
 

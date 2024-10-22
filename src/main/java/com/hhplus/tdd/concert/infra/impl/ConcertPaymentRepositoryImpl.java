@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -27,5 +28,13 @@ public class ConcertPaymentRepositoryImpl implements ConcertPaymentRepository {
                 .toList();
         concertPaymentJpaRepository.saveAll(entities);
 
+    }
+
+    @Override
+    public List<ConcertPayment> findAll() {
+        List<ConcertPaymentJpaEntity> entities = concertPaymentJpaRepository.findAll();
+        return entities.stream()
+                .map(concertPaymentMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }
