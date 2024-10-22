@@ -8,7 +8,6 @@ import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.response.PaymentRes;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
-import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueueStatus;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -101,7 +100,7 @@ public class ConcertPaymentUseCase {
 
     public void expiredWaitingQueue(String token) {
         WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(token);
-        waitingQueue.setTokenStatus(WaitingQueueStatus.EXPIRED.toString());
+        waitingQueue.expire();
         waitingQueueRepository.save(waitingQueue);
     }
 

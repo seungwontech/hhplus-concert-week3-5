@@ -110,7 +110,7 @@ class WaitingQueueServiceTest {
                 token,
                 LocalDateTime.now().plusMinutes(5),
                 LocalDateTime.now(),
-                WaitingQueueStatus.ACTIVE.toString()
+                WaitingQueueStatus.WAITING.toString()
         );
         when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
         when(waitingQueueRepository.save(any(WaitingQueue.class))).thenReturn(mockQueue);
@@ -134,7 +134,7 @@ class WaitingQueueServiceTest {
                 token,
                 LocalDateTime.now().plusMinutes(5),
                 LocalDateTime.now(),
-                WaitingQueueStatus.EXPIRED.toString()
+                WaitingQueueStatus.ACTIVE.toString()
         );
         when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
         when(waitingQueueRepository.save(any(WaitingQueue.class))).thenReturn(mockQueue);

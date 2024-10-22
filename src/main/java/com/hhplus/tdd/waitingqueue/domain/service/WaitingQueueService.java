@@ -69,14 +69,14 @@ public class WaitingQueueService {
     // 스케줄러 대기열 활성화 처리
     public void activeWaitingQueue(String token) {
         WaitingQueue result = waitingQueueRepository.getWaitingQueueToken(token);
-        result.of(result.getQueueId(),result.getUserId(),result.getToken(),result.getTokenExpiry(),result.getTokenCreated(),WaitingQueueStatus.ACTIVE.toString());
+        result.active();
         waitingQueueRepository.save(result);
     }
 
     // 스케줄러 대기열 만료 처리
     public void expiredWaitingQueue(String token) {
         WaitingQueue result = waitingQueueRepository.getWaitingQueueToken(token);
-        result.of(result.getQueueId(),result.getUserId(),result.getToken(),result.getTokenExpiry(),result.getTokenCreated(),WaitingQueueStatus.EXPIRED.toString());
+        result.expire();
         waitingQueueRepository.save(result);
     }
 
