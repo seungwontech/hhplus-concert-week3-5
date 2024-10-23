@@ -22,7 +22,6 @@ public class ConcertPaymentRepositoryImpl implements ConcertPaymentRepository {
 
     @Override
     public void saveAll(List<ConcertPayment> concertPayments) {
-
         List<ConcertPaymentJpaEntity> entities = concertPayments.stream()
                 .map(concertPaymentMapper::toEntity)
                 .toList();

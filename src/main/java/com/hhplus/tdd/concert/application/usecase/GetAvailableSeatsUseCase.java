@@ -6,10 +6,11 @@ import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
-import com.hhplus.tdd.concert.exception.ConcertErrorResult;
-import com.hhplus.tdd.concert.exception.ConcertException;
 import com.hhplus.tdd.concert.presentation.response.SeatRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class GetAvailableSeatsUseCase {
 
     private final ConcertRepository concertRepository;
@@ -27,19 +29,11 @@ public class GetAvailableSeatsUseCase {
 
     public SeatRes execute(Long concertId, Long concertScheduleId) {
 
-        Concert concert = concertRepository.getConcert(concertId);
+        Concert concert = concertRepository.getConcertOrThrow(concertId);
 
-        ConcertSchedule schedule = concertScheduleRepository.getConcertSchedule(concertId, concertScheduleId);
+        ConcertSchedule schedule = concertScheduleRepository.getConcertScheduleOrThrow(concertId, concertScheduleId);
 
-        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsBySchedule(concertId, concertScheduleId, "N");
-
-        if (schedule == null) {
-            throw new IllegalArgumentException("날짜가 존재하지 않습니다.");
-        }
-
-        if (seats.isEmpty()) {
-            throw new IllegalArgumentException("좌석이 존재하지 않습니다.");
-        }
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
 
         List<SeatRes.Seat> mapToSeatsResponse = mapToSeatResponse(seats);
 
@@ -57,7 +51,8 @@ public class GetAvailableSeatsUseCase {
 
     public SeatRes buildSeatResponse(Concert concert, Long concertScheduleId, LocalDateTime concertDate, List<SeatRes.Seat> reservedSeats) {
         if (reservedSeats.isEmpty()) {
-            throw new ConcertException(ConcertErrorResult.CONCERT_SEAT_AVAILABLE_NOT_FOUND);
+            log.error("콘서트 예약 가능한 좌석이 없습니다.", reservedSeats);
+            throw new CoreException(ErrorType.CONCERT_SEAT_AVAILABLE_NOT_FOUND, reservedSeats);
         }
         return SeatRes.of(concert.getConcertId(), concertScheduleId, concertDate, reservedSeats);
     }

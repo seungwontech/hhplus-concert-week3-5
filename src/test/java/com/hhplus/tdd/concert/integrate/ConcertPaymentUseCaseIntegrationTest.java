@@ -4,7 +4,6 @@ import com.hhplus.tdd.concert.application.usecase.ConcertPaymentUseCase;
 import com.hhplus.tdd.concert.domain.model.ConcertPayment;
 import com.hhplus.tdd.concert.domain.model.PaymentStatus;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
-import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.response.PaymentRes;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
@@ -29,9 +28,6 @@ public class ConcertPaymentUseCaseIntegrationTest {
     private ConcertPaymentRepository concertPaymentRepository;
 
     @Autowired
-    private ConcertSeatRepository concertSeatRepository;
-
-    @Autowired
     private WaitingQueueRepository waitingQueueRepository;
 
     private Long userId;
@@ -46,6 +42,7 @@ public class ConcertPaymentUseCaseIntegrationTest {
         concertSeatIds = new Long[]{1L, 2L}; // 예시 좌석 ID 배열
 
     }
+
     @Test
     void testExecuteSuccess() {
         // given
@@ -71,7 +68,7 @@ public class ConcertPaymentUseCaseIntegrationTest {
         }
 
         // 대기열 상태가 EXPIRED로 변경되었는지 확인
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken("token12345");
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow("token12345");
         assertThat(waitingQueue).isNotNull();
         assertThat(waitingQueue.getTokenStatus()).isEqualTo(WaitingQueueStatus.EXPIRED.toString());
     }

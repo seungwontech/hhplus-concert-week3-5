@@ -9,7 +9,7 @@ public interface WaitingQueueRepository {
 
     WaitingQueue save(WaitingQueue waitingQueue);
 
-    WaitingQueue getWaitingQueueToken(String token);
+    Long getLastActivePositionOrThrow();
 
-    Long getLastActivePosition();
+    WaitingQueue getWaitingQueueTokenOrThrow(String token);
 }

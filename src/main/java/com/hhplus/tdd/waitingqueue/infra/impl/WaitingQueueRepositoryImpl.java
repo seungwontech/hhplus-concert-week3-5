@@ -1,17 +1,19 @@
 package com.hhplus.tdd.waitingqueue.infra.impl;
 
-import com.hhplus.tdd.waitingqueue.domain.exception.WaitingQueueErrorResult;
-import com.hhplus.tdd.waitingqueue.domain.exception.WaitingQueueException;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
 import com.hhplus.tdd.waitingqueue.infra.WaitingQueueJpaRepository;
 import com.hhplus.tdd.waitingqueue.infra.entity.WaitingQueueJpaEntity;
 import com.hhplus.tdd.waitingqueue.infra.mapper.WaitingQueueMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
 
     private final WaitingQueueJpaRepository waitingQueueJpaRepository;
@@ -22,7 +24,8 @@ public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     public WaitingQueue getWaitingQueuePosition(Long userId) {
         WaitingQueueJpaEntity entity = waitingQueueJpaRepository.findByUserId(userId);
         if (entity == null) {
-            return null;
+            log.warn("대기열을 찾을 수 없습니다. userId: {}", userId);
+            throw new CoreException(ErrorType.WAITING_QUEUE_NOT_FOUND, userId);
         }
         return waitingQueueMapper.toDomain(entity);
     }
@@ -37,20 +40,20 @@ public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     }
 
     @Override
-    public WaitingQueue getWaitingQueueToken(String token) {
+    public WaitingQueue getWaitingQueueTokenOrThrow(String token) {
         WaitingQueueJpaEntity entity = waitingQueueJpaRepository.findByToken(token);
         if (entity == null) {
-            return null;
+            log.warn("대기열을 찾울 수 없습니다. token: {}", token);
+            throw new CoreException(ErrorType.WAITING_QUEUE_NOT_FOUND, token);
         }
         return waitingQueueMapper.toDomain(entity);
     }
 
     @Override
-    public Long getLastActivePosition() {
+    public Long getLastActivePositionOrThrow() {
         return waitingQueueJpaRepository.getLastActivePosition()
-               .orElseThrow(() -> new WaitingQueueException(WaitingQueueErrorResult.WAITINGQUEUE_NOT_FOUND)); // 예외 처리 추가
+                .orElseThrow(() -> new CoreException(ErrorType.WAITING_QUEUE_NOT_FOUND, null));
 
     }
-
 
 }

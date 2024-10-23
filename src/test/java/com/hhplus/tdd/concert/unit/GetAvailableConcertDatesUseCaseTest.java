@@ -8,6 +8,8 @@ import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.response.ScheduleRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,9 +54,9 @@ public class GetAvailableConcertDatesUseCaseTest {
         ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y");
         ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "N");
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
-        doReturn(Arrays.asList(schedule1, schedule2)).when(concertScheduleRepository).getConcertSchedules(concertId);
-        doReturn(Arrays.asList(seat1, seat2, seat3)).when(concertSeatRepository).getConcertSeats(concertId);
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
+        doReturn(Arrays.asList(schedule1, schedule2)).when(concertScheduleRepository).getConcertSchedulesOrThrow(concertId);
+        doReturn(Arrays.asList(seat1, seat2, seat3)).when(concertSeatRepository).getConcertSeatsOrThrow(concertId);
 
         // when
         ScheduleRes result = getAvailableConcertDatesUseCase.execute(concertId);
@@ -124,13 +126,13 @@ public class GetAvailableConcertDatesUseCaseTest {
         // given
         Long concertId = 1L;
 
-        doReturn(null).when(concertRepository).getConcert(concertId);
+        doReturn(null).when(concertRepository).getConcertOrThrow(concertId);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CoreException exception = assertThrows(CoreException.class, () -> {
             getAvailableConcertDatesUseCase.execute(concertId);
         });
-        assertEquals("콘서트가 존재하지 않습니다.", exception.getMessage());
+        assertEquals(ErrorType.CONCERT_NOT_FOUND, exception.getErrorType());
     }
 
     @Test
@@ -139,14 +141,14 @@ public class GetAvailableConcertDatesUseCaseTest {
         Long concertId = 1L;
         Concert concert = new Concert(concertId, "Test Concert");
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
-        doReturn(Collections.emptyList()).when(concertScheduleRepository).getConcertSchedules(concertId);
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
+        doReturn(Collections.emptyList()).when(concertScheduleRepository).getConcertSchedulesOrThrow(concertId);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CoreException exception = assertThrows(CoreException.class, () -> {
             getAvailableConcertDatesUseCase.execute(concertId);
         });
-        assertEquals("날짜가 존재하지 않습니다.", exception.getMessage());
+        assertEquals(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, exception.getErrorType());
     }
 
     @Test
@@ -157,14 +159,14 @@ public class GetAvailableConcertDatesUseCaseTest {
 
         ConcertSchedule schedule1 = new ConcertSchedule(1L, concertId, LocalDateTime.of(2024, 10, 20, 19, 0), 2);
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
-        doReturn(Collections.singletonList(schedule1)).when(concertScheduleRepository).getConcertSchedules(concertId);
-        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeats(concertId);
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
+        doReturn(Collections.singletonList(schedule1)).when(concertScheduleRepository).getConcertSchedulesOrThrow(concertId);
+        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeatsOrThrow(concertId);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CoreException exception = assertThrows(CoreException.class, () -> {
             getAvailableConcertDatesUseCase.execute(concertId);
         });
-        assertEquals("좌석이 존재하지 않습니다.", exception.getMessage());
+        assertEquals(ErrorType.CONCERT_SEAT_NOT_FOUND, exception.getErrorType());
     }
 }

@@ -2,15 +2,17 @@ package com.hhplus.tdd.balance.domain.service;
 
 import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
-import com.hhplus.tdd.balance.domain.exception.BalanceErrorResult;
-import com.hhplus.tdd.balance.domain.exception.BalanceException;
 import com.hhplus.tdd.balance.presentation.response.BalanceRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class BalanceService {
 
     private final BalanceRepository balanceRepository;
@@ -19,7 +21,8 @@ public class BalanceService {
     public BalanceRes getBalance(Long userId) {
         Balance result = balanceRepository.getBalance(userId);
         if (result == null) {
-            throw new BalanceException(BalanceErrorResult.BALANCE_NOT_FOUND);
+            log.warn("Balance not found for userId: {}", userId);
+            throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
         }
         return BalanceRes.builder()
                 .userId(result.getUserId())

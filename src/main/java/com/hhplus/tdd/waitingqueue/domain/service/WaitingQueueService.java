@@ -1,7 +1,5 @@
 package com.hhplus.tdd.waitingqueue.domain.service;
 
-import com.hhplus.tdd.waitingqueue.domain.exception.WaitingQueueErrorResult;
-import com.hhplus.tdd.waitingqueue.domain.exception.WaitingQueueException;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueueStatus;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
@@ -59,29 +57,26 @@ public class WaitingQueueService {
     }
 
     public WaitingQueue getWaitingQueue(String token) {
-        WaitingQueue result = waitingQueueRepository.getWaitingQueueToken(token);
-        if (result == null) {
-            throw new WaitingQueueException(WaitingQueueErrorResult.WAITINGQUEUE_NOT_FOUND);
-        }
+        WaitingQueue result = waitingQueueRepository.getWaitingQueueTokenOrThrow(token);
         return WaitingQueue.of(result.getQueueId(), result.getUserId(), result.getToken(), result.getTokenExpiry(), result.getTokenCreated(), result.getTokenStatus());
     }
 
     // 스케줄러 대기열 활성화 처리
     public void activeWaitingQueue(String token) {
-        WaitingQueue result = waitingQueueRepository.getWaitingQueueToken(token);
+        WaitingQueue result = waitingQueueRepository.getWaitingQueueTokenOrThrow(token);
         result.active();
         waitingQueueRepository.save(result);
     }
 
     // 스케줄러 대기열 만료 처리
     public void expiredWaitingQueue(String token) {
-        WaitingQueue result = waitingQueueRepository.getWaitingQueueToken(token);
+        WaitingQueue result = waitingQueueRepository.getWaitingQueueTokenOrThrow(token);
         result.expire();
         waitingQueueRepository.save(result);
     }
 
     // 활성화 상태인 순서 조회
     public Long getLastActivePosition(){
-        return waitingQueueRepository.getLastActivePosition();
+        return waitingQueueRepository.getLastActivePositionOrThrow();
     }
 }

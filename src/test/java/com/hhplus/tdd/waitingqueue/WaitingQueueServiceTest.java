@@ -1,7 +1,7 @@
 package com.hhplus.tdd.waitingqueue;
 
-import com.hhplus.tdd.waitingqueue.domain.exception.WaitingQueueErrorResult;
-import com.hhplus.tdd.waitingqueue.domain.exception.WaitingQueueException;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueueStatus;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
@@ -89,7 +89,7 @@ class WaitingQueueServiceTest {
                 LocalDateTime.now(),
                 WaitingQueueStatus.WAITING.toString()
         );
-        when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
+        when(waitingQueueRepository.getWaitingQueueTokenOrThrow(token)).thenReturn(mockQueue);
 
         // When
         WaitingQueue result = waitingQueueService.getWaitingQueue(token);
@@ -97,7 +97,7 @@ class WaitingQueueServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(mockQueue.getToken(), result.getToken());
-        verify(waitingQueueRepository, times(1)).getWaitingQueueToken(token);
+        verify(waitingQueueRepository, times(1)).getWaitingQueueTokenOrThrow(token);
     }
 
     @Test
@@ -112,7 +112,7 @@ class WaitingQueueServiceTest {
                 LocalDateTime.now(),
                 WaitingQueueStatus.WAITING.toString()
         );
-        when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
+        when(waitingQueueRepository.getWaitingQueueTokenOrThrow(token)).thenReturn(mockQueue);
         when(waitingQueueRepository.save(any(WaitingQueue.class))).thenReturn(mockQueue);
 
         // When
@@ -120,7 +120,7 @@ class WaitingQueueServiceTest {
 
         // Then
         assertEquals(WaitingQueueStatus.ACTIVE.toString(), mockQueue.getTokenStatus());
-        verify(waitingQueueRepository, times(1)).getWaitingQueueToken(token);
+        verify(waitingQueueRepository, times(1)).getWaitingQueueTokenOrThrow(token);
         verify(waitingQueueRepository, times(1)).save(mockQueue);
     }
 
@@ -136,7 +136,7 @@ class WaitingQueueServiceTest {
                 LocalDateTime.now(),
                 WaitingQueueStatus.ACTIVE.toString()
         );
-        when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
+        when(waitingQueueRepository.getWaitingQueueTokenOrThrow(token)).thenReturn(mockQueue);
         when(waitingQueueRepository.save(any(WaitingQueue.class))).thenReturn(mockQueue);
 
         // When
@@ -150,25 +150,25 @@ class WaitingQueueServiceTest {
     void 활성화_상태인_순서_조회_성공() {
         // Given
         Long expectedPosition = 1L;
-        when(waitingQueueRepository.getLastActivePosition()).thenReturn(expectedPosition);
+        when(waitingQueueRepository.getLastActivePositionOrThrow()).thenReturn(expectedPosition);
 
         // When
         Long result = waitingQueueService.getLastActivePosition();
 
         // Then
         assertEquals(expectedPosition, result);
-        verify(waitingQueueRepository, times(1)).getLastActivePosition();
+        verify(waitingQueueRepository, times(1)).getLastActivePositionOrThrow();
     }
 
     @Test
     public void 대기열_찾지못함_예외처리() {
         String token = "invalid";
 
-        when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(null);
+        when(waitingQueueRepository.getWaitingQueueTokenOrThrow(token)).thenThrow(new CoreException(ErrorType.WAITING_QUEUE_NOT_FOUND, token));
 
-        WaitingQueueException exception = assertThrows(WaitingQueueException.class, () -> {
+        CoreException exception = assertThrows(CoreException.class, () -> {
             waitingQueueService.getWaitingQueue(token);
         });
-        assertEquals(WaitingQueueErrorResult.WAITINGQUEUE_NOT_FOUND, exception.getWaitingQueueErrorResult());
+        assertEquals(ErrorType.WAITING_QUEUE_NOT_FOUND, exception.getErrorType());
     }
 }

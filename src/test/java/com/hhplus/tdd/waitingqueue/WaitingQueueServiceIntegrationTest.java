@@ -25,7 +25,7 @@ public class WaitingQueueServiceIntegrationTest {
         final Long userId = 4L;
         QueuePositionRes res = waitingQueueService.addWaitingQueue(userId);
 
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(res.getToken());
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(res.getToken());
 
         assertAll(
                 "WaitingQueue 검증",
@@ -41,7 +41,7 @@ public class WaitingQueueServiceIntegrationTest {
     void 토큰조회() {
         final Long userId = 4L;
         QueuePositionRes res = waitingQueueService.getWaitingQueuePosition(userId);
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(res.getToken());
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(res.getToken());
         assertAll(
                 "WaitingQueue 검증",
                 () -> assertNotNull(waitingQueue, "대기열 정보가 null이어서는 안 됩니다."),
@@ -56,13 +56,13 @@ public class WaitingQueueServiceIntegrationTest {
         // Given
         final Long userId = 5L;
         QueuePositionRes res = waitingQueueService.addWaitingQueue(userId);
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(res.getToken());
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(res.getToken());
 
         // When
         waitingQueueService.activeWaitingQueue(res.getToken());
 
         // Then
-        WaitingQueue updatedQueue = waitingQueueRepository.getWaitingQueueToken(res.getToken());
+        WaitingQueue updatedQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(res.getToken());
         assertEquals(WaitingQueueStatus.ACTIVE.toString(), updatedQueue.getTokenStatus(), "토큰 상태가 ACTIVE이어야 합니다.");
     }
 
@@ -71,13 +71,13 @@ public class WaitingQueueServiceIntegrationTest {
         // Given
         final Long userId = 6L;
         QueuePositionRes res = waitingQueueService.addWaitingQueue(userId);
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(res.getToken());
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(res.getToken());
 
         // When
         waitingQueueService.expiredWaitingQueue(res.getToken());
 
         // Then
-        WaitingQueue updatedQueue = waitingQueueRepository.getWaitingQueueToken(res.getToken());
+        WaitingQueue updatedQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(res.getToken());
         assertEquals(WaitingQueueStatus.EXPIRED.toString(), updatedQueue.getTokenStatus(), "토큰 상태가 EXPIRED이어야 합니다.");
     }
 

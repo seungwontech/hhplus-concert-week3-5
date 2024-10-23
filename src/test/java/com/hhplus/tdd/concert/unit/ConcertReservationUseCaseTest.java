@@ -5,7 +5,6 @@ import com.hhplus.tdd.concert.domain.model.Concert;
 import com.hhplus.tdd.concert.domain.model.ConcertReservation;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
-import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
 import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
@@ -32,9 +31,6 @@ public class ConcertReservationUseCaseTest {
     private ConcertRepository concertRepository;
 
     @Mock
-    private ConcertReservationRepository concertReservationRepository;
-
-    @Mock
     private ConcertSeatRepository concertSeatRepository;
 
     @InjectMocks
@@ -55,8 +51,8 @@ public class ConcertReservationUseCaseTest {
 
         ConcertReservationReq reservationReq = new ConcertReservationReq(userId, seatIds);
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
-        doReturn(seats).when(concertSeatRepository).getConcertSeatsBySchedule(concertId, concertScheduleId, "N");
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
+        doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
         doNothing().when(concertSeatRepository).saveAll(anyList());
         // when
         ConcertReservationRes result = concertReservationUseCase.execute(concertId, concertScheduleId, reservationReq);

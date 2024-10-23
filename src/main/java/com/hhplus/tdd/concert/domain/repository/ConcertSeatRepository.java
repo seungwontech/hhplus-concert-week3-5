@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface ConcertSeatRepository {
 
-    List<ConcertSeat> getConcertSeats(Long concertId);
-
-    List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId, String reserveYn);
+    List<ConcertSeat> getConcertSeatsOrThrow(Long concertId);
 
     List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 
     void saveAll(List<ConcertSeat> concertSeats);
 
-    List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds);
+    List<ConcertSeat> getConcertSeatsByScheduleOrThrow(Long concertId, Long concertScheduleId, String reserveYn);
+
+    List<ConcertSeat> getConcertSeatIdInOrThrow(Long[] concertSeatIds);
 }

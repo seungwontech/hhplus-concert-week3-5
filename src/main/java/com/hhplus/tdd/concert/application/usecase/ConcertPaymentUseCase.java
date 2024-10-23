@@ -7,16 +7,20 @@ import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.response.PaymentRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Service
 @RequiredArgsConstructor
+@Service
+@Slf4j
 public class ConcertPaymentUseCase {
 
     private final WaitingQueueRepository waitingQueueRepository;
@@ -27,7 +31,7 @@ public class ConcertPaymentUseCase {
 
     public PaymentRes execute(String token, ConcertPaymentReq concertPaymentReq) {
 
-        List<ConcertSeat> concertSeats = getConcertSeatIdIn(concertPaymentReq.getConcertSeatIds());
+        List<ConcertSeat> concertSeats = getConcertSeatIdIns(concertPaymentReq.getConcertSeatIds());
 
         List<ConcertPayment> concertPayments = processConcertPayment(concertPaymentReq, concertSeats);
 
@@ -67,7 +71,8 @@ public class ConcertPaymentUseCase {
             Integer seatPrice = reservedSeatPrices.get(seatId); // 좌석 가격 가져오기
 
             if (seatPrice == null) {
-                throw new IllegalArgumentException("해당 좌석에 대한 가격 정보가 없습니다: 좌석 ID = " + seatId);
+                log.error("좌석의 가격 정보가 없습니다. seatId: {}", seatId);
+                throw new CoreException(ErrorType.CONCERT_SEAT_PRICE_NOT_FOUND, seatId);
             }
 
             ConcertPayment concertPayment = ConcertPayment.of(
@@ -90,18 +95,16 @@ public class ConcertPaymentUseCase {
         concertPaymentRepository.saveAll(concertPayments);
     }
 
-    public List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds) {
-        List<ConcertSeat> result = concertSeatRepository.getConcertSeatIdIn(concertSeatIds);
-        if (result == null) {
-            throw new IllegalArgumentException("좌석 정보가 없습니다.");
-        }
+    public List<ConcertSeat> getConcertSeatIdIns(Long[] concertSeatIds) {
+        List<ConcertSeat> result = concertSeatRepository.getConcertSeatIdInOrThrow(concertSeatIds);
         return result;
     }
 
     public void expiredWaitingQueue(String token) {
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(token);
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(token);
         waitingQueue.expire();
         waitingQueueRepository.save(waitingQueue);
     }
 
 }
+

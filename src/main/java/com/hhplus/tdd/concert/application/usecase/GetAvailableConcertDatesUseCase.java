@@ -7,7 +7,10 @@ import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.response.ScheduleRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class GetAvailableConcertDatesUseCase {
 
     private final ConcertRepository concertRepository;
@@ -25,19 +29,9 @@ public class GetAvailableConcertDatesUseCase {
 
     public ScheduleRes execute(Long concertId) {
 
-        Concert concert = concertRepository.getConcert(concertId);
-        List<ConcertSchedule> schedules = concertScheduleRepository.getConcertSchedules(concertId);
-        List<ConcertSeat> seats = concertSeatRepository.getConcertSeats(concertId);
-
-        if (concert == null) {
-            throw new IllegalArgumentException("콘서트가 존재하지 않습니다.");
-        }
-        if (schedules.isEmpty()) {
-            throw new IllegalArgumentException("날짜가 존재하지 않습니다.");
-        }
-        if (seats.isEmpty()) {
-            throw new IllegalArgumentException("좌석이 존재하지 않습니다.");
-        }
+        Concert concert = concertRepository.getConcertOrThrow(concertId);
+        List<ConcertSchedule> schedules = concertScheduleRepository.getConcertSchedulesOrThrow(concertId);
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsOrThrow(concertId);
 
         Map<Long, Integer> reservedSeatsMap = countReservedSeatsByScheduleId(seats);
 
@@ -77,7 +71,8 @@ public class GetAvailableConcertDatesUseCase {
 
     public ScheduleRes buildScheduleResponse(Concert concert, List<ScheduleRes.Schedule> scheduleList) {
         if (scheduleList.isEmpty()) {
-            throw new IllegalArgumentException("콘서트의 사용 가능한 일정 없습니다.");
+            log.error("콘서트 예약 가능한 일정이 없습니다. scheduleList {}" ,scheduleList);
+            throw new CoreException(ErrorType.CONCERT_SCHEDULE_AVAILABLE_NOT_FOUND, scheduleList);
         } else {
             return ScheduleRes.of(concert.getConcertId(), scheduleList);
         }

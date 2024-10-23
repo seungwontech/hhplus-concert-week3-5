@@ -5,7 +5,10 @@ import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.infra.ConcertSeatJpaRepository;
 import com.hhplus.tdd.concert.infra.entity.ConcertSeatJpaEntity;
 import com.hhplus.tdd.concert.infra.mapper.ConcertSeatMapper;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
 
     private final ConcertSeatJpaRepository concertSeatJpaRepository;
@@ -20,8 +24,13 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     private final ConcertSeatMapper concertSeatMapper;
 
     @Override
-    public List<ConcertSeat> getConcertSeats(Long concertId) {
+    public List<ConcertSeat> getConcertSeatsOrThrow(Long concertId) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertId(concertId);
+
+        if (entities.isEmpty()) {
+            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}", concertId);
+            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, entities);
+        }
 
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
@@ -29,13 +38,18 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     }
 
     @Override
-    public List<ConcertSeat> getConcertSeatsBySchedule(Long concertId, Long concertScheduleId, String reserveYn) {
-
+    public List<ConcertSeat> getConcertSeatsByScheduleOrThrow(Long concertId, Long concertScheduleId, String reserveYn) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertIdAndConcertScheduleIdAndReserveYn(concertId, concertScheduleId, reserveYn);
+        if (entities.isEmpty()) {
+            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}, concertScheduleId: {}", concertId, concertScheduleId);
+            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, entities);
+        }
+
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
@@ -54,11 +68,16 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     }
 
     @Override
-    public List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds) {
+    public List<ConcertSeat> getConcertSeatIdInOrThrow(Long[] concertSeatIds) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertSeatIdIn(concertSeatIds);
+        if (entities.isEmpty()) {
+            log.warn("콘서트 좌석을 찾을 수 없습니다. concertSeatIds: {}", (Object[]) concertSeatIds);
+            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, entities);
+        }
 
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
 }

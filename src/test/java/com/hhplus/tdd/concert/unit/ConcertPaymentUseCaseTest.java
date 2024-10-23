@@ -8,6 +8,8 @@ import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.response.PaymentRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueueStatus;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
@@ -58,9 +60,9 @@ public class ConcertPaymentUseCaseTest {
         List<ConcertSeat> concertSeats = Arrays.asList(concertSeat1, concertSeat2);
 
         // Mock 동작 설정
-        when(concertSeatRepository.getConcertSeatIdIn(concertSeatIds)).thenReturn(concertSeats);
+        when(concertSeatRepository.getConcertSeatIdInOrThrow(concertSeatIds)).thenReturn(concertSeats);
         WaitingQueue mockQueue = new WaitingQueue(1L, userId, token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5), "ACTIVE");
-        when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
+        when(waitingQueueRepository.getWaitingQueueTokenOrThrow(token)).thenReturn(mockQueue);
 
         // 메서드 실행
         PaymentRes paymentRes = concertPaymentUseCase.execute(token, paymentReq);
@@ -117,10 +119,10 @@ public class ConcertPaymentUseCaseTest {
         ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 40000, "N");
         ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 40000, "N");
 
-        doReturn(Arrays.asList(seat1, seat2)).when(concertSeatRepository).getConcertSeatIdIn(concertSeatIds);
+        doReturn(Arrays.asList(seat1, seat2)).when(concertSeatRepository).getConcertSeatIdInOrThrow(concertSeatIds);
 
         // when
-        List<ConcertSeat> seats = concertPaymentUseCase.getConcertSeatIdIn(concertSeatIds);
+        List<ConcertSeat> seats = concertPaymentUseCase.getConcertSeatIdIns(concertSeatIds);
 
         // then
         assertEquals(2, seats.size());
@@ -133,14 +135,14 @@ public class ConcertPaymentUseCaseTest {
         // given
         Long[] concertSeatIds = new Long[]{1L, 2L};
 
-        doReturn(null).when(concertSeatRepository).getConcertSeatIdIn(concertSeatIds);
+        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeatIdInOrThrow(concertSeatIds);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            concertPaymentUseCase.getConcertSeatIdIn(concertSeatIds);
+        CoreException exception = assertThrows(CoreException.class, () -> {
+            concertPaymentUseCase.getConcertSeatIdIns(concertSeatIds);
         });
 
-        assertEquals("좌석 정보가 없습니다.", exception.getMessage());
+        assertEquals(ErrorType.CONCERT_SEAT_NOT_FOUND, exception.getErrorType());
     }
 
 
@@ -154,14 +156,14 @@ public class ConcertPaymentUseCaseTest {
         ConcertPaymentReq paymentReq = ConcertPaymentReq.of(userId, concertReservationIds, concertSeatIds);
 
         // 좌석 가격이 없음을 나타내기 위해 빈 리스트를 반환하도록 설정
-        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeatIdIn(concertSeatIds);
+        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeatIdInOrThrow(concertSeatIds);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CoreException exception = assertThrows(CoreException.class, () -> {
             concertPaymentUseCase.execute("Token", paymentReq);
         });
 
-        assertEquals("해당 좌석에 대한 가격 정보가 없습니다: 좌석 ID = " + concertSeatIds[0], exception.getMessage());
+        assertEquals(ErrorType.CONCERT_SEAT_PRICE_NOT_FOUND, exception.getErrorType());
     }
 
     @Test
@@ -170,7 +172,7 @@ public class ConcertPaymentUseCaseTest {
         String token = "someToken";
         WaitingQueue waitingQueue = WaitingQueue.of(1L, 1L, token, LocalDateTime.now().plusMinutes(1), LocalDateTime.now(), WaitingQueueStatus.EXPIRED.toString());
 
-        doReturn(waitingQueue).when(waitingQueueRepository).getWaitingQueueToken(token);
+        doReturn(waitingQueue).when(waitingQueueRepository).getWaitingQueueTokenOrThrow(token);
 
         // when
         concertPaymentUseCase.expiredWaitingQueue(token);

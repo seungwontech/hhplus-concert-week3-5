@@ -3,21 +3,21 @@ package com.hhplus.tdd.balance;
 import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
 import com.hhplus.tdd.balance.domain.service.BalanceService;
-import com.hhplus.tdd.balance.domain.exception.BalanceErrorResult;
-import com.hhplus.tdd.balance.domain.exception.BalanceException;
 import com.hhplus.tdd.balance.presentation.response.BalanceRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
-
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,12 +52,12 @@ public class BalanceServiceTest {
         doReturn(null).when(balanceRepository).getBalance(userId);
 
         // when
-        BalanceException result = assertThrows(BalanceException.class, () -> {
+        CoreException result = assertThrows(CoreException.class, () -> {
             balanceService.getBalance(userId);
         });
 
         // then
-        assertThat(result.getErrorResult()).isEqualTo(BalanceErrorResult.BALANCE_NOT_FOUND);
+        assertThat(result.getErrorType()).isEqualTo(ErrorType.BALANCE_NOT_FOUND);
 
     }
 
@@ -92,8 +92,8 @@ public class BalanceServiceTest {
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
         // when & then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balanceService.charge(userId, amount));
-        assertEquals(BalanceErrorResult.BALANCE_LESS_THAN_ZERO, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balanceService.charge(userId, amount));
+        assertEquals(ErrorType.BALANCE_LESS_THAN_ZERO, exception.getErrorType());
     }
 
     @Test
@@ -106,8 +106,8 @@ public class BalanceServiceTest {
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
         // when & then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balanceService.charge(userId, amount));
-        assertEquals(BalanceErrorResult.BALANCE_LIMIT_AMOUNT, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balanceService.charge(userId, amount));
+        assertEquals(ErrorType.BALANCE_LIMIT_AMOUNT, exception.getErrorType());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class BalanceServiceTest {
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
         // when & then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balanceService.use(userId, amount));
-        assertEquals(BalanceErrorResult.BALANCE_EXCEEDS_AVAILABLE, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balanceService.use(userId, amount));
+        assertEquals(ErrorType.BALANCE_EXCEEDS_AVAILABLE, exception.getErrorType());
     }
 }
