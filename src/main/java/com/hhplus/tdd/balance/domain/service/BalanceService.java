@@ -18,32 +18,24 @@ public class BalanceService {
     private final BalanceRepository balanceRepository;
 
     // 잔액 조회
-    public BalanceRes getBalance(Long userId) {
+    public Balance getBalance(Long userId) {
         Balance result = balanceRepository.getBalance(userId);
         if (result == null) {
             log.warn("Balance not found for userId: {}", userId);
             throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
         }
-        return BalanceRes.builder()
-                .userId(result.getUserId())
-                .balanceAmount(result.getBalanceAmount())
-                .updatedAt(result.getBalanceUpdated())
-                .build();
+        return result;
     }
 
     @Transactional
-    public BalanceRes charge(Long userId, int amount) {
+    public Balance charge(Long userId, int amount) {
         Balance balance = balanceRepository.getBalance(userId);
 
-        Balance updatedBalance = balance.charge(amount);
+        Balance result = balance.charge(amount);
 
-        balanceRepository.save(updatedBalance);
+        balanceRepository.save(result);
 
-        return BalanceRes.builder()
-                .userId(updatedBalance.getUserId())
-                .balanceAmount(updatedBalance.getBalanceAmount())
-                .updatedAt(updatedBalance.getBalanceUpdated())
-                .build();
+        return result;
     }
 
     @Transactional

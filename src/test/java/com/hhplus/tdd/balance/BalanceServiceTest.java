@@ -37,7 +37,7 @@ public class BalanceServiceTest {
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
         // when
-        BalanceRes result = balanceService.getBalance(userId);
+        Balance result = balanceService.getBalance(userId);
 
         // then
         assertThat(result).isNotNull();
@@ -74,7 +74,7 @@ public class BalanceServiceTest {
                 .when(balanceRepository).save(any(Balance.class));
 
         //when
-        BalanceRes result = balanceService.charge(userId, amount);
+        Balance result = balanceService.charge(userId, amount);
 
         // then
         assertThat(result).isNotNull();

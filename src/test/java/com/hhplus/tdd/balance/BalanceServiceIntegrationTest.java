@@ -24,7 +24,7 @@ public class BalanceServiceIntegrationTest {
         // given
         Long userId = 1L;
         // when
-        BalanceRes res = balanceService.getBalance(userId);
+        Balance res = balanceService.getBalance(userId);
 
         // then
         assertThat(res).isNotNull();
@@ -54,7 +54,7 @@ public class BalanceServiceIntegrationTest {
         Long userId = 1L;
         int amount = 500;
         // when
-        BalanceRes res = balanceService.charge(userId, amount);
+        Balance res = balanceService.charge(userId, amount);
 
         Balance balance = balanceRepository.getBalance(userId);
 
