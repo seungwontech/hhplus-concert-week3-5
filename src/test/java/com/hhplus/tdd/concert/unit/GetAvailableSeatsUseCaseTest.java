@@ -43,12 +43,12 @@ public class GetAvailableSeatsUseCaseTest {
     private final Long concertScheduleId = 1L;
 
     @Test
-    void execute_성공() {
+    public void 실행_성공() {
         // given
         Concert concert = new Concert(concertId, "2024 봄 콘서트");
         ConcertSchedule schedule = new ConcertSchedule(concertScheduleId, concertId, LocalDateTime.now(), 100);
-        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N", 1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N", 1L);
         List<ConcertSeat> seats = Arrays.asList(seat1, seat2);
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
@@ -67,10 +67,10 @@ public class GetAvailableSeatsUseCaseTest {
 
 
     @Test
-    void mapToSeatResponse_성공() {
+    public void 좌석정보를응답형식으로매핑하는메서드_성공() {
         // given
-        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N", 1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N", 1L);
         List<ConcertSeat> seats = Arrays.asList(seat1, seat2);
 
         // when
@@ -83,7 +83,7 @@ public class GetAvailableSeatsUseCaseTest {
     }
 
     @Test
-    void buildSeatResponse_성공() {
+    public void 좌석정보를빌드_성공() {
         // given
         List<SeatRes.Seat> reservedSeats = Collections.singletonList(SeatRes.Seat.of(1L, 1, 50000, "N"));
         Concert concert = new Concert(concertId, "2024 봄 콘서트");
@@ -99,16 +99,14 @@ public class GetAvailableSeatsUseCaseTest {
     }
 
     @Test
-    void buildSeatResponse_좌석없음() {
+    public void 좌석응답빌드좌석없음_실패() {
         // given
         List<SeatRes.Seat> reservedSeats = Collections.emptyList();
         Concert concert = new Concert(concertId, "2024 봄 콘서트");
         LocalDateTime concertDate = LocalDateTime.now();
 
         // when & then
-        CoreException exception = assertThrows(CoreException.class, () -> {
-            getAvailableSeatsUseCase.buildSeatResponse(concert, concertScheduleId, concertDate, reservedSeats);
-        });
+        CoreException exception = assertThrows(CoreException.class, () -> getAvailableSeatsUseCase.buildSeatResponse(concert, concertScheduleId, concertDate, reservedSeats));
         assertEquals(ErrorType.CONCERT_SEAT_AVAILABLE_NOT_FOUND, exception.getErrorType());
     }
 }

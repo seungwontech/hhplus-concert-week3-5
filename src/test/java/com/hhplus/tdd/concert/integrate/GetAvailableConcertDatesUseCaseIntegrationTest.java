@@ -43,9 +43,9 @@ public class GetAvailableConcertDatesUseCaseIntegrationTest {
         ConcertSchedule schedule2 = new ConcertSchedule(2L, concertId, LocalDateTime.now().plusDays(1), 50);
         concertScheduleRepository.saveAll(List.of(schedule1, schedule2));
 
-        ConcertSeat seat1 = new ConcertSeat(1L, schedule1.getConcertScheduleId(), concertId, 1, 1000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, schedule1.getConcertScheduleId(), concertId, 2, 1000, "N");
-        ConcertSeat seat3 = new ConcertSeat(3L, schedule2.getConcertScheduleId(), concertId, 1, 1000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, schedule1.getConcertScheduleId(), concertId, 1, 1000, "N", 1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, schedule1.getConcertScheduleId(), concertId, 2, 1000, "N", 1L);
+        ConcertSeat seat3 = new ConcertSeat(3L, schedule2.getConcertScheduleId(), concertId, 1, 1000, "N", 1L);
         concertSeatRepository.saveAll(List.of(seat1, seat2, seat3));
         // When
         ScheduleRes response = getAvailableConcertDatesUseCase.execute(concertId);

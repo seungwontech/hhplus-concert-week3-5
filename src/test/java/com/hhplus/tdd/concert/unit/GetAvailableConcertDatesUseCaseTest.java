@@ -50,9 +50,9 @@ public class GetAvailableConcertDatesUseCaseTest {
         ConcertSchedule schedule1 = new ConcertSchedule(1L, concertId, LocalDateTime.of(2024, 10, 20, 19, 0), 2);
         ConcertSchedule schedule2 = new ConcertSchedule(2L, concertId, LocalDateTime.of(2024, 10, 21, 19, 0), 2);
 
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y");
-        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y",1L);
+        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "N",1L);
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
         doReturn(Arrays.asList(schedule1, schedule2)).when(concertScheduleRepository).getConcertSchedules(concertId);
@@ -70,9 +70,9 @@ public class GetAvailableConcertDatesUseCaseTest {
     @Test
     void countReservedSeatsByScheduleId_예약좌석수계산_성공() {
         // given
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y");
-        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "Y");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y",1L);
+        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "Y",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2, seat3);
         System.out.println(seats.get(0));
         System.out.println(seats.get(1));

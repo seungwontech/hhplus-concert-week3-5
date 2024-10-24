@@ -54,8 +54,8 @@ public class ConcertPaymentUseCaseTest {
         ConcertPaymentReq paymentReq = ConcertPaymentReq.of(userId, concertReservationIds, concertSeatIds);
 
         // Mock 데이터 설정
-        ConcertSeat concertSeat1 = new ConcertSeat(1L, 1L, 1L, 10, 100, "N");
-        ConcertSeat concertSeat2 = new ConcertSeat(2L, 1L, 1L, 10, 100, "N");
+        ConcertSeat concertSeat1 = new ConcertSeat(1L, 1L, 1L, 10, 100, "N", 1L);
+        ConcertSeat concertSeat2 = new ConcertSeat(2L, 1L, 1L, 10, 100, "N", 1L);
 
         List<ConcertSeat> concertSeats = Arrays.asList(concertSeat1, concertSeat2);
 
@@ -85,8 +85,8 @@ public class ConcertPaymentUseCaseTest {
         Long[] concertReservationIds = new Long[]{10L, 20L};
         ConcertPaymentReq paymentReq = ConcertPaymentReq.of(userId, concertReservationIds, concertSeatIds);
 
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 40000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 40000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 40000, "N", 1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 40000, "N",1L);
 
         // when
         List<ConcertPayment> payments = concertPaymentUseCase.processConcertPayment(paymentReq, Arrays.asList(seat1, seat2));
@@ -119,8 +119,8 @@ public class ConcertPaymentUseCaseTest {
         Long[] concertSeatIds = new Long[]{1L, 2L};
         Long[] concertReservationIds = {1L, 2L};
 
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 40000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 40000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 40000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 40000, "N",1L);
 
         doReturn(Arrays.asList(seat1, seat2)).when(concertSeatRepository).getConcertSeatIdIn(concertSeatIds);
         String token = "someToken";

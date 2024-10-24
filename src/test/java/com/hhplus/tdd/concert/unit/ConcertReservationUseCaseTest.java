@@ -49,8 +49,8 @@ public class ConcertReservationUseCaseTest {
         Long[] seatIds = {1L, 2L};
 
         Concert concert = new Concert(concertId, "2024 봄 콘서트");
-        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2);
 
         ConcertReservationReq reservationReq = new ConcertReservationReq(userId, seatIds);
@@ -74,8 +74,8 @@ public class ConcertReservationUseCaseTest {
     void mapSeatByIds_성공() {
         // given
         Long[] seatIds = {1L, 2L};
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 50000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 60000, "N",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2);
 
         // when
@@ -95,8 +95,8 @@ public class ConcertReservationUseCaseTest {
         Long concertScheduleId = 2L;
         Long[] seatIds = {1L, 2L};
 
-        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2);
 
         doReturn(seats).when(concertSeatRepository).findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, seatIds);
@@ -134,7 +134,7 @@ public class ConcertReservationUseCaseTest {
         Concert concert = new Concert(1L, "2024 봄 콘서트");
         ConcertReservation reservation = ConcertReservation.of(null, 3L, 2L, 1L, "WAITING", LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
         Map<Long, ConcertSeat> seatMap = new HashMap<>();
-        seatMap.put(1L, new ConcertSeat(1L, 2L, 1L, 1, 50000, "Y"));
+        seatMap.put(1L, new ConcertSeat(1L, 2L, 1L, 1, 50000, "Y",1L));
 
         // when
         ConcertReservationResult result = concertReservationUseCase.buildReservationResult(concert, List.of(reservation), seatMap);
