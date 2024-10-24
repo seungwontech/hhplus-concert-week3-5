@@ -39,10 +39,9 @@ public class ConcertPaymentUseCase {
 
         expiredWaitingQueue(token);
 
-        Integer totalPrice = 0;
-        for (ConcertPayment payment : concertPayments) {
-            totalPrice += payment.getPaymentAmount();
-        }
+        Integer totalPrice = concertPayments.stream()
+                .mapToInt(ConcertPayment::getPaymentAmount)
+                .sum();
 
         return PaymentRes.of(totalPrice, PaymentStatus.SUCCESS.toString(), LocalDateTime.now());
     }
