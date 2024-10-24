@@ -64,12 +64,11 @@ public class ConcertReservationUseCase {
 
         List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
 
-        List<ConcertSeat> updateSeats = new ArrayList<>();
         for (ConcertSeat seat : concertSeats) {
-            updateSeats.add(seat.updateReserveYn("Y"));
+            seat.setAsReserved();
         }
 
-        return updateSeats;
+        return concertSeats;
     }
 
 

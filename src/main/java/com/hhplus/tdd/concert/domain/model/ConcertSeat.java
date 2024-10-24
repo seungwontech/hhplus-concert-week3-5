@@ -20,7 +20,8 @@ public class ConcertSeat {
         return new ConcertSeat(concertSeatId, concertScheduleId, concertId, seatNumber, seatPrice, reserveYn);
     }
 
-    public ConcertSeat updateReserveYn(String reserveYn) {
-        return new ConcertSeat(this.concertSeatId, this.concertScheduleId, this.concertId, this.seatNumber, this.seatPrice, reserveYn);
+
+    public void setAsReserved() {
+        this.reserveYn = "Y";
     }
 }
