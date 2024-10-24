@@ -8,4 +8,6 @@ public interface ConcertReservationRepository {
     void saveAll(List<ConcertReservation> reservations);
 
     List<ConcertReservation> findAll();
+
+    List<ConcertReservation> findByConcertReservationIdIn(Long[] concertReservationId);
 }

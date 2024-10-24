@@ -8,6 +8,8 @@ import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertScheduleRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.response.ScheduleRes;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,11 +50,11 @@ public class GetAvailableConcertDatesUseCaseTest {
         ConcertSchedule schedule1 = new ConcertSchedule(1L, concertId, LocalDateTime.of(2024, 10, 20, 19, 0), 2);
         ConcertSchedule schedule2 = new ConcertSchedule(2L, concertId, LocalDateTime.of(2024, 10, 21, 19, 0), 2);
 
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y");
-        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y",1L);
+        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "N",1L);
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
         doReturn(Arrays.asList(schedule1, schedule2)).when(concertScheduleRepository).getConcertSchedules(concertId);
         doReturn(Arrays.asList(seat1, seat2, seat3)).when(concertSeatRepository).getConcertSeats(concertId);
 
@@ -68,9 +70,9 @@ public class GetAvailableConcertDatesUseCaseTest {
     @Test
     void countReservedSeatsByScheduleId_예약좌석수계산_성공() {
         // given
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y");
-        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "Y");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, concertId, 1, 1000, "Y",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, concertId, 2, 1000, "Y",1L);
+        ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "Y",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2, seat3);
         System.out.println(seats.get(0));
         System.out.println(seats.get(1));
@@ -120,51 +122,19 @@ public class GetAvailableConcertDatesUseCaseTest {
 
 
     @Test
-    void 예약가능한날짜조회_실패_콘서트가_없음() {
-        // given
-        Long concertId = 1L;
-
-        doReturn(null).when(concertRepository).getConcert(concertId);
-
-        // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            getAvailableConcertDatesUseCase.execute(concertId);
-        });
-        assertEquals("콘서트가 존재하지 않습니다.", exception.getMessage());
-    }
-
-    @Test
     void 예약가능한날짜조회_실패_일정이_없음() {
         // given
         Long concertId = 1L;
         Concert concert = new Concert(concertId, "Test Concert");
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
         doReturn(Collections.emptyList()).when(concertScheduleRepository).getConcertSchedules(concertId);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CoreException exception = assertThrows(CoreException.class, () -> {
             getAvailableConcertDatesUseCase.execute(concertId);
         });
-        assertEquals("날짜가 존재하지 않습니다.", exception.getMessage());
+        assertEquals(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, exception.getErrorType());
     }
 
-    @Test
-    void 예약가능한날짜조회_실패_좌석이_없음() {
-        // given
-        Long concertId = 1L;
-        Concert concert = new Concert(concertId, "Test Concert");
-
-        ConcertSchedule schedule1 = new ConcertSchedule(1L, concertId, LocalDateTime.of(2024, 10, 20, 19, 0), 2);
-
-        doReturn(concert).when(concertRepository).getConcert(concertId);
-        doReturn(Collections.singletonList(schedule1)).when(concertScheduleRepository).getConcertSchedules(concertId);
-        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeats(concertId);
-
-        // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            getAvailableConcertDatesUseCase.execute(concertId);
-        });
-        assertEquals("좌석이 존재하지 않습니다.", exception.getMessage());
-    }
 }

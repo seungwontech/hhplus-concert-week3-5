@@ -1,8 +1,8 @@
 package com.hhplus.tdd.balance;
 
-import com.hhplus.tdd.balance.domain.exception.BalanceErrorResult;
-import com.hhplus.tdd.balance.domain.exception.BalanceException;
 import com.hhplus.tdd.balance.domain.model.Balance;
+import com.hhplus.tdd.config.exception.CoreException;
+import com.hhplus.tdd.config.exception.ErrorType;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -34,15 +34,15 @@ public class BalanceTest {
         int chargeAmount1 = 0;
 
         // When & Then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balance.charge(chargeAmount1));
-        assertEquals(BalanceErrorResult.BALANCE_LESS_THAN_ZERO, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balance.charge(chargeAmount1));
+        assertEquals(ErrorType.BALANCE_LESS_THAN_ZERO, exception.getErrorType());
 
         // Given
         int chargeAmount2 = -100;
 
         // When & Then
-        exception = assertThrows(BalanceException.class, () -> balance.charge(chargeAmount2));
-        assertEquals(BalanceErrorResult.BALANCE_LESS_THAN_ZERO, exception.getErrorResult());
+        exception = assertThrows(CoreException.class, () -> balance.charge(chargeAmount2));
+        assertEquals(ErrorType.BALANCE_LESS_THAN_ZERO, exception.getErrorType());
     }
 
     @Test
@@ -52,8 +52,8 @@ public class BalanceTest {
         int chargeAmount = 1;
 
         // When & Then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balance.charge(chargeAmount));
-        assertEquals(BalanceErrorResult.BALANCE_LIMIT_AMOUNT, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balance.charge(chargeAmount));
+        assertEquals(ErrorType.BALANCE_LIMIT_AMOUNT, exception.getErrorType());
     }
 
     @Test
@@ -63,8 +63,8 @@ public class BalanceTest {
         int chargeAmount = 3;
 
         // When & Then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balance.charge(chargeAmount));
-        assertEquals(BalanceErrorResult.BALANCE_LIMIT_AMOUNT, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balance.charge(chargeAmount));
+        assertEquals(ErrorType.BALANCE_LIMIT_AMOUNT, exception.getErrorType());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class BalanceTest {
         int useAmount = 600;
 
         // When & Then
-        BalanceException exception = assertThrows(BalanceException.class, () -> balance.use(useAmount));
-        assertEquals(BalanceErrorResult.BALANCE_EXCEEDS_AVAILABLE, exception.getErrorResult());
+        CoreException exception = assertThrows(CoreException.class, () -> balance.use(useAmount));
+        assertEquals(ErrorType.BALANCE_EXCEEDS_AVAILABLE, exception.getErrorType());
     }
 }

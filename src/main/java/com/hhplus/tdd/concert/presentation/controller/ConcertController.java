@@ -4,6 +4,8 @@ import com.hhplus.tdd.concert.application.usecase.ConcertPaymentUseCase;
 import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.application.usecase.GetAvailableConcertDatesUseCase;
 import com.hhplus.tdd.concert.application.usecase.GetAvailableSeatsUseCase;
+import com.hhplus.tdd.concert.domain.model.ConcertPaymentResult;
+import com.hhplus.tdd.concert.domain.model.ConcertReservationResult;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
 import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
@@ -25,7 +27,7 @@ public class ConcertController {
     private final ConcertPaymentUseCase concertPaymentUseCase;
 
     // 예약 가능 날짜 조회 API
-    @GetMapping("/{concertId}/schedules/")
+    @GetMapping("/{concertId}/schedules")
     public ResponseEntity<ScheduleRes> concertSchedules(@PathVariable Long concertId) {
         ScheduleRes res = getAvailableConcertDatesUseCase.execute(concertId);
         return ResponseEntity.ok(res);
@@ -40,13 +42,11 @@ public class ConcertController {
 
     // 좌석 예약 API
     @PostMapping("/{concertId}/schedules/{concertScheduleId}/seats/reservation")
-    public ResponseEntity<ConcertReservationRes> concertReservation(
-            @RequestHeader("token") String token
-            , @PathVariable Long concertId
+    public ResponseEntity<ConcertReservationRes> concertReservation(@PathVariable Long concertId
             , @PathVariable Long concertScheduleId
             , @RequestBody ConcertReservationReq concertReservationReq) {
-        ConcertReservationRes res = concertReservationUseCase.execute(concertId, concertScheduleId, concertReservationReq);
-        return ResponseEntity.ok(res);
+        ConcertReservationResult res = concertReservationUseCase.execute(concertId, concertScheduleId, concertReservationReq);
+        return ResponseEntity.ok(ConcertReservationRes.of(res.getUserId(), res.getConcertName(), res.getSeats(), res.getTotalPrice()));
     }
 
     // 콘서트 결제 API
@@ -55,9 +55,9 @@ public class ConcertController {
             @RequestHeader("Token") String token
             , @PathVariable Long concertId
             , @RequestBody ConcertPaymentReq concertPaymentReq) {
-        PaymentRes res = concertPaymentUseCase.execute(token, concertPaymentReq);
+        ConcertPaymentResult res = concertPaymentUseCase.execute(token, concertPaymentReq);
 
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(PaymentRes.of(res.getTotalPrice(),res.getPaymentStatus(), res.getTimestamp()));
 
     }
 

@@ -34,4 +34,12 @@ public class ConcertReservationRepositoryImpl implements ConcertReservationRepos
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ConcertReservation> findByConcertReservationIdIn(Long[] concertReservationId) {
+        List<ConcertReservationJpaEntity> entities =  concertReservationJpaRepository.findByConcertReservationIdIn(concertReservationId);
+        return entities.stream()
+                .map(concertReservationMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
 }

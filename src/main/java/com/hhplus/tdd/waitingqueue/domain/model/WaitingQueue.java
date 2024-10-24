@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Setter
 public class WaitingQueue {
     private Long queueId;           // 대기열 ID
     private Long userId;            // 사용자 ID
@@ -18,5 +17,13 @@ public class WaitingQueue {
 
     public static WaitingQueue of(Long queueId, Long userId, String token, LocalDateTime tokenExpiry, LocalDateTime tokenCreated, String tokenStatus) {
         return new WaitingQueue(queueId, userId, token, tokenExpiry, tokenCreated, tokenStatus);
+    }
+
+    public void expire() {
+        this.tokenStatus = WaitingQueueStatus.EXPIRED.toString();
+    }
+
+    public void active() {
+        this.tokenStatus = WaitingQueueStatus.ACTIVE.toString();
     }
 }

@@ -2,13 +2,13 @@ package com.hhplus.tdd.concert.integrate;
 
 import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.domain.model.ConcertReservation;
+import com.hhplus.tdd.concert.domain.model.ConcertReservationResult;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.model.ReservationStatus;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
-import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class ConcertReservationUseCaseIntegrationTest {
         ConcertReservationReq request = ConcertReservationReq.of(userId, concertSeatIds);
 
         // when
-        ConcertReservationRes response = concertReservationUseCase.execute(concertId, concertScheduleId, request);
+        ConcertReservationResult response = concertReservationUseCase.execute(concertId, concertScheduleId, request);
 
         // then
         assertThat(response.getUserId()).isEqualTo(userId);

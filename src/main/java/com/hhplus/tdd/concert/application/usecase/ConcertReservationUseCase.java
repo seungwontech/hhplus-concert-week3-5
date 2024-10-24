@@ -1,15 +1,13 @@
 package com.hhplus.tdd.concert.application.usecase;
 
-import com.hhplus.tdd.concert.domain.model.Concert;
-import com.hhplus.tdd.concert.domain.model.ConcertReservation;
-import com.hhplus.tdd.concert.domain.model.ConcertSeat;
-import com.hhplus.tdd.concert.domain.model.ReservationStatus;
+import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
 import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +15,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ConcertReservationUseCase {
 
     private final ConcertRepository concertRepository;
@@ -25,11 +24,11 @@ public class ConcertReservationUseCase {
 
     private final ConcertSeatRepository concertSeatRepository;
 
-    public ConcertReservationRes execute(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
+    public ConcertReservationResult execute(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
 
-        Concert concert = concertRepository.getConcert(concertId);
+        Concert concert = concertRepository.getConcertOrThrow(concertId);
 
-        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsBySchedule(concertId, concertScheduleId, "N");
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
 
         Map<Long, ConcertSeat> seatMap = mapSeatByIds(seats, reservationReq.getConcertSeatIds());
 
@@ -62,12 +61,11 @@ public class ConcertReservationUseCase {
 
         List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
 
-        List<ConcertSeat> updateSeats = new ArrayList<>();
         for (ConcertSeat seat : concertSeats) {
-            updateSeats.add(seat.updateReserveYn("Y"));
+            seat.setAsReserved();
         }
 
-        return updateSeats;
+        return concertSeats;
     }
 
 
@@ -91,7 +89,7 @@ public class ConcertReservationUseCase {
         return reservations;
     }
 
-    public ConcertReservationRes buildReservationResult(Concert concert, List<ConcertReservation> reservations, Map<Long, ConcertSeat> seatMap) {
+    public ConcertReservationResult buildReservationResult(Concert concert, List<ConcertReservation> reservations, Map<Long, ConcertSeat> seatMap) {
         List<ConcertReservationRes.Seat> seatResponseList = new ArrayList<>();
         int totalPrice = 0;
 
@@ -110,7 +108,7 @@ public class ConcertReservationUseCase {
             }
         }
 
-        return ConcertReservationRes.of(reservations.get(0).getUserId(), concert.getConcertTitle(), seatResponseList, totalPrice);
+        return ConcertReservationResult.of(reservations.get(0).getUserId(), concert.getConcertTitle(), seatResponseList, totalPrice);
     }
 
 }

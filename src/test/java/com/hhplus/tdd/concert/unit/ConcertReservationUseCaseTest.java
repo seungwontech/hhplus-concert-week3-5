@@ -3,12 +3,12 @@ package com.hhplus.tdd.concert.unit;
 import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.domain.model.Concert;
 import com.hhplus.tdd.concert.domain.model.ConcertReservation;
+import com.hhplus.tdd.concert.domain.model.ConcertReservationResult;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
-import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,10 +32,10 @@ public class ConcertReservationUseCaseTest {
     private ConcertRepository concertRepository;
 
     @Mock
-    private ConcertReservationRepository concertReservationRepository;
+    private ConcertSeatRepository concertSeatRepository;
 
     @Mock
-    private ConcertSeatRepository concertSeatRepository;
+    private ConcertReservationRepository concertReservationRepository;
 
     @InjectMocks
     private ConcertReservationUseCase concertReservationUseCase;
@@ -49,17 +49,18 @@ public class ConcertReservationUseCaseTest {
         Long[] seatIds = {1L, 2L};
 
         Concert concert = new Concert(concertId, "2024 봄 콘서트");
-        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2);
 
         ConcertReservationReq reservationReq = new ConcertReservationReq(userId, seatIds);
 
-        doReturn(concert).when(concertRepository).getConcert(concertId);
-        doReturn(seats).when(concertSeatRepository).getConcertSeatsBySchedule(concertId, concertScheduleId, "N");
+        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
+        doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
         doNothing().when(concertSeatRepository).saveAll(anyList());
+        doNothing().when(concertReservationRepository).saveAll(anyList());
         // when
-        ConcertReservationRes result = concertReservationUseCase.execute(concertId, concertScheduleId, reservationReq);
+        ConcertReservationResult result = concertReservationUseCase.execute(concertId, concertScheduleId, reservationReq);
 
         // then
         assertEquals(userId, result.getUserId());
@@ -73,8 +74,8 @@ public class ConcertReservationUseCaseTest {
     void mapSeatByIds_성공() {
         // given
         Long[] seatIds = {1L, 2L};
-        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, 1L, 1L, 1, 50000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, 1L, 1L, 2, 60000, "N",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2);
 
         // when
@@ -94,8 +95,8 @@ public class ConcertReservationUseCaseTest {
         Long concertScheduleId = 2L;
         Long[] seatIds = {1L, 2L};
 
-        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N");
-        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N");
+        ConcertSeat seat1 = new ConcertSeat(1L, concertScheduleId, concertId, 1, 50000, "N",1L);
+        ConcertSeat seat2 = new ConcertSeat(2L, concertScheduleId, concertId, 2, 60000, "N",1L);
         List<ConcertSeat> seats = List.of(seat1, seat2);
 
         doReturn(seats).when(concertSeatRepository).findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, seatIds);
@@ -133,10 +134,10 @@ public class ConcertReservationUseCaseTest {
         Concert concert = new Concert(1L, "2024 봄 콘서트");
         ConcertReservation reservation = ConcertReservation.of(null, 3L, 2L, 1L, "WAITING", LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
         Map<Long, ConcertSeat> seatMap = new HashMap<>();
-        seatMap.put(1L, new ConcertSeat(1L, 2L, 1L, 1, 50000, "Y"));
+        seatMap.put(1L, new ConcertSeat(1L, 2L, 1L, 1, 50000, "Y",1L));
 
         // when
-        ConcertReservationRes result = concertReservationUseCase.buildReservationResult(concert, List.of(reservation), seatMap);
+        ConcertReservationResult result = concertReservationUseCase.buildReservationResult(concert, List.of(reservation), seatMap);
 
         // then
         assertEquals(3L, result.getUserId());

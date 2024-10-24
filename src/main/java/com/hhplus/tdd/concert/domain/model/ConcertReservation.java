@@ -23,9 +23,7 @@ public class ConcertReservation {
         return new ConcertReservation(concertReservationId, userId, concertScheduleId, concertSeatId, reservationStatus, reservationDate, reservationExpiry);
     }
 
-    public ConcertReservation updateCanceled(String status) {
-        return new ConcertReservation(this.concertReservationId, this.userId, this.concertScheduleId, this.concertSeatId, status, this.reservationDate, this.reservationExpiry);
+    public void setReservationStatus () {
+        this.reservationStatus = ReservationStatus.CONFIRMED.toString();
     }
-
-
 }
