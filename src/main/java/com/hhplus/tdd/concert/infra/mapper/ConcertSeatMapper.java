@@ -14,7 +14,8 @@ public class ConcertSeatMapper {
                 entity.getConcertId(),
                 entity.getSeatNumber(),
                 entity.getSeatPrice(),
-                entity.getReserveYn()
+                entity.getReserveYn(),
+                entity.getVersion()
         );
     }
 
@@ -25,7 +26,8 @@ public class ConcertSeatMapper {
                 concertSeat.getConcertId(),
                 concertSeat.getSeatNumber(),
                 concertSeat.getSeatPrice(),
-                concertSeat.getReserveYn()
+                concertSeat.getReserveYn(),
+                concertSeat.getVersion()
         );
     }
 }
