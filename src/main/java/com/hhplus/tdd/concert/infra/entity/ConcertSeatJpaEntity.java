@@ -32,7 +32,11 @@ public class ConcertSeatJpaEntity {
     @Column(name = "reserve_yn", nullable = false)
     private String reserveYn; // 예약 여부 (Y/N)
 
-    public static ConcertSeatJpaEntity of(Long concertSeatId, Long concertScheduleId, Long concertId, int seatNumber, int seatPrice, String reserveYn) {
-        return new ConcertSeatJpaEntity(concertSeatId, concertScheduleId, concertId, seatNumber, seatPrice, reserveYn);
+    @Version
+    @Column(nullable = false)
+    private Long version = 1L;
+
+    public static ConcertSeatJpaEntity of(Long concertSeatId, Long concertScheduleId, Long concertId, int seatNumber, int seatPrice, String reserveYn, Long version) {
+        return new ConcertSeatJpaEntity(concertSeatId, concertScheduleId, concertId, seatNumber, seatPrice, reserveYn, version);
     }
 }
