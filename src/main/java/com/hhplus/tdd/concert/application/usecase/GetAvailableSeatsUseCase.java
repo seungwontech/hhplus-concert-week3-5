@@ -36,7 +36,7 @@ public class GetAvailableSeatsUseCase {
         List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
 
         if (seats.isEmpty()) {
-            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}", concertId, concertScheduleId);
+            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}, concertScheduleId: {}", concertId, concertScheduleId);
             throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, seats);
         }
 
@@ -56,7 +56,7 @@ public class GetAvailableSeatsUseCase {
 
     public SeatRes buildSeatResponse(Concert concert, Long concertScheduleId, LocalDateTime concertDate, List<SeatRes.Seat> reservedSeats) {
         if (reservedSeats.isEmpty()) {
-            log.error("콘서트 예약 가능한 좌석이 없습니다.", reservedSeats);
+            log.error("콘서트 예약 가능한 좌석이 없습니다. reservedSeats: {}", reservedSeats);
             throw new CoreException(ErrorType.CONCERT_SEAT_AVAILABLE_NOT_FOUND, reservedSeats);
         }
         return SeatRes.of(concert.getConcertId(), concertScheduleId, concertDate, reservedSeats);

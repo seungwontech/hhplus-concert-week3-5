@@ -3,11 +3,12 @@ package com.hhplus.tdd.concert.unit;
 import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.domain.model.Concert;
 import com.hhplus.tdd.concert.domain.model.ConcertReservation;
+import com.hhplus.tdd.concert.domain.model.ConcertReservationResult;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
+import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
-import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +34,9 @@ public class ConcertReservationUseCaseTest {
     @Mock
     private ConcertSeatRepository concertSeatRepository;
 
+    @Mock
+    private ConcertReservationRepository concertReservationRepository;
+
     @InjectMocks
     private ConcertReservationUseCase concertReservationUseCase;
 
@@ -54,8 +58,9 @@ public class ConcertReservationUseCaseTest {
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
         doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
         doNothing().when(concertSeatRepository).saveAll(anyList());
+        doNothing().when(concertReservationRepository).saveAll(anyList());
         // when
-        ConcertReservationRes result = concertReservationUseCase.execute(concertId, concertScheduleId, reservationReq);
+        ConcertReservationResult result = concertReservationUseCase.execute(concertId, concertScheduleId, reservationReq);
 
         // then
         assertEquals(userId, result.getUserId());
@@ -132,7 +137,7 @@ public class ConcertReservationUseCaseTest {
         seatMap.put(1L, new ConcertSeat(1L, 2L, 1L, 1, 50000, "Y"));
 
         // when
-        ConcertReservationRes result = concertReservationUseCase.buildReservationResult(concert, List.of(reservation), seatMap);
+        ConcertReservationResult result = concertReservationUseCase.buildReservationResult(concert, List.of(reservation), seatMap);
 
         // then
         assertEquals(3L, result.getUserId());

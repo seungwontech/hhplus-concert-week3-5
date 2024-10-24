@@ -65,11 +65,11 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     }
 
     @Override
-    public List<ConcertSeat> getConcertSeatIdInOrThrow(Long[] concertSeatIds) {
+    public List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertSeatIdIn(concertSeatIds);
+
         if (entities.isEmpty()) {
-            log.warn("콘서트 좌석을 찾을 수 없습니다. concertSeatIds: {}", (Object[]) concertSeatIds);
-            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, entities);
+            return null;
         }
 
         return entities.stream()

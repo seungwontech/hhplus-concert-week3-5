@@ -1,12 +1,12 @@
 package com.hhplus.tdd.concert.application.usecase;
 
 import com.hhplus.tdd.concert.domain.model.ConcertPayment;
+import com.hhplus.tdd.concert.domain.model.ConcertPaymentResult;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
 import com.hhplus.tdd.concert.domain.model.PaymentStatus;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
-import com.hhplus.tdd.concert.presentation.response.PaymentRes;
 import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
@@ -29,9 +29,14 @@ public class ConcertPaymentUseCase {
 
     private final ConcertSeatRepository concertSeatRepository;
 
-    public PaymentRes execute(String token, ConcertPaymentReq concertPaymentReq) {
+    public ConcertPaymentResult execute(String token, ConcertPaymentReq concertPaymentReq) {
 
-        List<ConcertSeat> concertSeats = getConcertSeatIdIns(concertPaymentReq.getConcertSeatIds());
+        List<ConcertSeat> concertSeats = concertSeatRepository.getConcertSeatIdIn(concertPaymentReq.getConcertSeatIds());
+
+        if (concertSeats.isEmpty()) {
+            log.warn("콘서트 좌석을 찾을 수 없습니다. concertSeats: {}", (Object) concertPaymentReq.getConcertSeatIds());
+            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, concertSeats);
+        }
 
         List<ConcertPayment> concertPayments = processConcertPayment(concertPaymentReq, concertSeats);
 
@@ -39,11 +44,10 @@ public class ConcertPaymentUseCase {
 
         expiredWaitingQueue(token);
 
-        Integer totalPrice = concertPayments.stream()
+        int totalPrice = concertPayments.stream()
                 .mapToInt(ConcertPayment::getPaymentAmount)
                 .sum();
-
-        return PaymentRes.of(totalPrice, PaymentStatus.SUCCESS.toString(), LocalDateTime.now());
+        return ConcertPaymentResult.of(totalPrice);
     }
 
     // 좌석별 가격을 계산하고, 예약 정보와 결제 정보를 매칭하여 ConcertPayment 객체 생성.
@@ -67,12 +71,7 @@ public class ConcertPaymentUseCase {
         for (int i = 0; i < concertReservationIds.length; i++) {
             Long seatId = concertSeatIds[i];   // 해당 좌석 ID
             Long reservationId = concertReservationIds[i];  // 해당 예약 ID
-            Integer seatPrice = reservedSeatPrices.get(seatId); // 좌석 가격 가져오기
-
-            if (seatPrice == null) {
-                log.error("좌석의 가격 정보가 없습니다. seatId: {}", seatId);
-                throw new CoreException(ErrorType.CONCERT_SEAT_PRICE_NOT_FOUND, seatId);
-            }
+            int seatPrice = reservedSeatPrices.get(seatId); // 좌석 가격 가져오기
 
             ConcertPayment concertPayment = ConcertPayment.of(
                     null,
@@ -94,10 +93,6 @@ public class ConcertPaymentUseCase {
         concertPaymentRepository.saveAll(concertPayments);
     }
 
-    public List<ConcertSeat> getConcertSeatIdIns(Long[] concertSeatIds) {
-        List<ConcertSeat> result = concertSeatRepository.getConcertSeatIdInOrThrow(concertSeatIds);
-        return result;
-    }
 
     public void expiredWaitingQueue(String token) {
         WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(token);

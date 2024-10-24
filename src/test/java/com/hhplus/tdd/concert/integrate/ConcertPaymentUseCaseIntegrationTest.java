@@ -2,10 +2,10 @@ package com.hhplus.tdd.concert.integrate;
 
 import com.hhplus.tdd.concert.application.usecase.ConcertPaymentUseCase;
 import com.hhplus.tdd.concert.domain.model.ConcertPayment;
+import com.hhplus.tdd.concert.domain.model.ConcertPaymentResult;
 import com.hhplus.tdd.concert.domain.model.PaymentStatus;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
-import com.hhplus.tdd.concert.presentation.response.PaymentRes;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueueStatus;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
@@ -49,12 +49,12 @@ public class ConcertPaymentUseCaseIntegrationTest {
         ConcertPaymentReq request = ConcertPaymentReq.of(userId, concertReservationIds, concertSeatIds);
 
         // when
-        PaymentRes response = concertPaymentUseCase.execute("token12345", request);
+        ConcertPaymentResult response = concertPaymentUseCase.execute("token12345", request);
 
         // then
-        assertThat(response.getPaymentAmount()).isEqualTo(2000); // 총 결제 금액
+        assertThat(response.getTotalPrice()).isEqualTo(2000); // 총 결제 금액
         assertThat(response.getPaymentStatus()).isEqualTo(PaymentStatus.SUCCESS.toString());
-        assertThat(response.getPaymentDate()).isNotNull();
+        assertThat(response.getTimestamp()).isNotNull();
 
         // 결제 정보가 데이터베이스에 저장되었는지 확인
         List<ConcertPayment> payments = concertPaymentRepository.findAll();

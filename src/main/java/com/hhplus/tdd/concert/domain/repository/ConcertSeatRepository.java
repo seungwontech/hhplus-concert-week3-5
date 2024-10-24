@@ -14,5 +14,5 @@ public interface ConcertSeatRepository {
 
     List<ConcertSeat> getConcertSeatsByScheduleOrThrow(Long concertId, Long concertScheduleId, String reserveYn);
 
-    List<ConcertSeat> getConcertSeatIdInOrThrow(Long[] concertSeatIds);
+    List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds);
 }

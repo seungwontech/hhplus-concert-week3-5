@@ -1,9 +1,6 @@
 package com.hhplus.tdd.concert.application.usecase;
 
-import com.hhplus.tdd.concert.domain.model.Concert;
-import com.hhplus.tdd.concert.domain.model.ConcertReservation;
-import com.hhplus.tdd.concert.domain.model.ConcertSeat;
-import com.hhplus.tdd.concert.domain.model.ReservationStatus;
+import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
@@ -27,7 +24,7 @@ public class ConcertReservationUseCase {
 
     private final ConcertSeatRepository concertSeatRepository;
 
-    public ConcertReservationRes execute(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
+    public ConcertReservationResult execute(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
 
         Concert concert = concertRepository.getConcertOrThrow(concertId);
 
@@ -92,7 +89,7 @@ public class ConcertReservationUseCase {
         return reservations;
     }
 
-    public ConcertReservationRes buildReservationResult(Concert concert, List<ConcertReservation> reservations, Map<Long, ConcertSeat> seatMap) {
+    public ConcertReservationResult buildReservationResult(Concert concert, List<ConcertReservation> reservations, Map<Long, ConcertSeat> seatMap) {
         List<ConcertReservationRes.Seat> seatResponseList = new ArrayList<>();
         int totalPrice = 0;
 
@@ -111,7 +108,7 @@ public class ConcertReservationUseCase {
             }
         }
 
-        return ConcertReservationRes.of(reservations.get(0).getUserId(), concert.getConcertTitle(), seatResponseList, totalPrice);
+        return ConcertReservationResult.of(reservations.get(0).getUserId(), concert.getConcertTitle(), seatResponseList, totalPrice);
     }
 
 }
