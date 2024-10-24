@@ -30,8 +30,15 @@ public class GetAvailableConcertDatesUseCase {
     public ScheduleRes execute(Long concertId) {
 
         Concert concert = concertRepository.getConcertOrThrow(concertId);
-        List<ConcertSchedule> schedules = concertScheduleRepository.getConcertSchedulesOrThrow(concertId);
-        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsOrThrow(concertId);
+        
+        List<ConcertSchedule> schedules = concertScheduleRepository.getConcertSchedules(concertId);
+
+        if (schedules.isEmpty()) {
+            log.warn("콘서트의 일정이 없습니다. concertId: {}", concertId);
+            throw new CoreException(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, concertId);
+        }
+        
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeats(concertId);
 
         Map<Long, Integer> reservedSeatsMap = countReservedSeatsByScheduleId(seats);
 

@@ -24,14 +24,11 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     private final ConcertSeatMapper concertSeatMapper;
 
     @Override
-    public List<ConcertSeat> getConcertSeatsOrThrow(Long concertId) {
+    public List<ConcertSeat> getConcertSeats(Long concertId) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertId(concertId);
-
         if (entities.isEmpty()) {
-            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}", concertId);
-            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, entities);
+            return null;
         }
-
         return entities.stream()
                 .map(concertSeatMapper::toDomain)
                 .collect(Collectors.toList());

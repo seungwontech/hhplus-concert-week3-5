@@ -20,7 +20,6 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
     @Override
     public Concert getConcertOrThrow(Long concertId) {
-
         return concertJpaRepository.findById(concertId)
                 .map(concertMapper::toDomain).orElseThrow(() -> new CoreException(ErrorType.CONCERT_NOT_FOUND, concertId));
     }

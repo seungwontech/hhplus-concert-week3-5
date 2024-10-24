@@ -35,6 +35,11 @@ public class GetAvailableSeatsUseCase {
 
         List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
 
+        if (seats.isEmpty()) {
+            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}", concertId, concertScheduleId);
+            throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, seats);
+        }
+
         List<SeatRes.Seat> mapToSeatsResponse = mapToSeatResponse(seats);
 
         return buildSeatResponse(concert, concertScheduleId, schedule.getConcertDate(), mapToSeatsResponse);

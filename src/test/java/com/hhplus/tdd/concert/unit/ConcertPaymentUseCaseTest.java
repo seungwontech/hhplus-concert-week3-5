@@ -62,7 +62,7 @@ public class ConcertPaymentUseCaseTest {
         // Mock 동작 설정
         when(concertSeatRepository.getConcertSeatIdInOrThrow(concertSeatIds)).thenReturn(concertSeats);
         WaitingQueue mockQueue = new WaitingQueue(1L, userId, token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5), "ACTIVE");
-        when(waitingQueueRepository.getWaitingQueueTokenOrThrow(token)).thenReturn(mockQueue);
+        when(waitingQueueRepository.getWaitingQueueToken(token)).thenReturn(mockQueue);
 
         // 메서드 실행
         PaymentRes paymentRes = concertPaymentUseCase.execute(token, paymentReq);
@@ -172,7 +172,7 @@ public class ConcertPaymentUseCaseTest {
         String token = "someToken";
         WaitingQueue waitingQueue = WaitingQueue.of(1L, 1L, token, LocalDateTime.now().plusMinutes(1), LocalDateTime.now(), WaitingQueueStatus.EXPIRED.toString());
 
-        doReturn(waitingQueue).when(waitingQueueRepository).getWaitingQueueTokenOrThrow(token);
+        doReturn(waitingQueue).when(waitingQueueRepository).getWaitingQueueToken(token);
 
         // when
         concertPaymentUseCase.expiredWaitingQueue(token);

@@ -55,8 +55,8 @@ public class GetAvailableConcertDatesUseCaseTest {
         ConcertSeat seat3 = new ConcertSeat(3L, 2L, concertId, 3, 1000, "N");
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(Arrays.asList(schedule1, schedule2)).when(concertScheduleRepository).getConcertSchedulesOrThrow(concertId);
-        doReturn(Arrays.asList(seat1, seat2, seat3)).when(concertSeatRepository).getConcertSeatsOrThrow(concertId);
+        doReturn(Arrays.asList(schedule1, schedule2)).when(concertScheduleRepository).getConcertSchedules(concertId);
+        doReturn(Arrays.asList(seat1, seat2, seat3)).when(concertSeatRepository).getConcertSeats(concertId);
 
         // when
         ScheduleRes result = getAvailableConcertDatesUseCase.execute(concertId);
@@ -142,7 +142,7 @@ public class GetAvailableConcertDatesUseCaseTest {
         Concert concert = new Concert(concertId, "Test Concert");
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(Collections.emptyList()).when(concertScheduleRepository).getConcertSchedulesOrThrow(concertId);
+        doReturn(Collections.emptyList()).when(concertScheduleRepository).getConcertSchedules(concertId);
 
         // when & then
         CoreException exception = assertThrows(CoreException.class, () -> {
@@ -160,8 +160,8 @@ public class GetAvailableConcertDatesUseCaseTest {
         ConcertSchedule schedule1 = new ConcertSchedule(1L, concertId, LocalDateTime.of(2024, 10, 20, 19, 0), 2);
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(Collections.singletonList(schedule1)).when(concertScheduleRepository).getConcertSchedulesOrThrow(concertId);
-        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeatsOrThrow(concertId);
+        doReturn(Collections.singletonList(schedule1)).when(concertScheduleRepository).getConcertSchedules(concertId);
+        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeats(concertId);
 
         // when & then
         CoreException exception = assertThrows(CoreException.class, () -> {

@@ -24,12 +24,12 @@ public class ConcertScheduleRepositoryImpl implements ConcertScheduleRepository 
     private final ConcertScheduleMapper concertScheduleMapper;
 
     @Override
-    public List<ConcertSchedule> getConcertSchedulesOrThrow(Long concertId) {
+    public List<ConcertSchedule> getConcertSchedules(Long concertId) {
         List<ConcertScheduleJpaEntity> entities = concertScheduleJpaRepository.findByConcertId(concertId);
         if (entities.isEmpty()) {
-            log.warn("콘서트의 일정이 없습니다. concertId: {}", concertId);
-            throw new CoreException(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, concertId);
+            return null;
         }
+
         return entities.stream()
                 .map(concertScheduleMapper::toDomain)
                 .collect(Collectors.toList());

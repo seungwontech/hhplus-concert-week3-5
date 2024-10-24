@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ConcertSeatRepository {
 
-    List<ConcertSeat> getConcertSeatsOrThrow(Long concertId);
+    List<ConcertSeat> getConcertSeats(Long concertId);
 
     List<ConcertSeat> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 
