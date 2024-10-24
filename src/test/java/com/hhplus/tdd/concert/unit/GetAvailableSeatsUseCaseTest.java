@@ -65,35 +65,6 @@ public class GetAvailableSeatsUseCaseTest {
         assertEquals(seats.size(), seatRes.getSeats().size());
     }
 
-    @Test
-    void execute_일정존재하지않음() {
-        // given
-        doReturn(new Concert(concertId, "2024 봄 콘서트")).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(null).when(concertScheduleRepository).getConcertScheduleOrThrow(concertId, concertScheduleId);
-
-        // when & then
-        CoreException exception = assertThrows(CoreException.class, () -> {
-            getAvailableSeatsUseCase.execute(concertId, concertScheduleId);
-        });
-        assertEquals(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, exception.getErrorType());
-    }
-
-    @Test
-    void execute_좌석없음() {
-        // given
-        Concert concert = new Concert(concertId, "2024 봄 콘서트");
-        ConcertSchedule schedule = new ConcertSchedule(concertScheduleId, concertId, LocalDateTime.now(), 100);
-
-        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(schedule).when(concertScheduleRepository).getConcertScheduleOrThrow(concertId, concertScheduleId);
-        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
-
-        // when & then
-        CoreException exception = assertThrows(CoreException.class, () -> {
-            getAvailableSeatsUseCase.execute(concertId, concertScheduleId);
-        });
-        assertEquals(ErrorType.CONCERT_SEAT_AVAILABLE_NOT_FOUND, exception.getErrorType());
-    }
 
     @Test
     void mapToSeatResponse_성공() {

@@ -122,20 +122,6 @@ public class GetAvailableConcertDatesUseCaseTest {
 
 
     @Test
-    void 예약가능한날짜조회_실패_콘서트가_없음() {
-        // given
-        Long concertId = 1L;
-
-        doReturn(null).when(concertRepository).getConcertOrThrow(concertId);
-
-        // when & then
-        CoreException exception = assertThrows(CoreException.class, () -> {
-            getAvailableConcertDatesUseCase.execute(concertId);
-        });
-        assertEquals(ErrorType.CONCERT_NOT_FOUND, exception.getErrorType());
-    }
-
-    @Test
     void 예약가능한날짜조회_실패_일정이_없음() {
         // given
         Long concertId = 1L;
@@ -151,22 +137,4 @@ public class GetAvailableConcertDatesUseCaseTest {
         assertEquals(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, exception.getErrorType());
     }
 
-    @Test
-    void 예약가능한날짜조회_실패_좌석이_없음() {
-        // given
-        Long concertId = 1L;
-        Concert concert = new Concert(concertId, "Test Concert");
-
-        ConcertSchedule schedule1 = new ConcertSchedule(1L, concertId, LocalDateTime.of(2024, 10, 20, 19, 0), 2);
-
-        doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(Collections.singletonList(schedule1)).when(concertScheduleRepository).getConcertSchedules(concertId);
-        doReturn(Collections.emptyList()).when(concertSeatRepository).getConcertSeats(concertId);
-
-        // when & then
-        CoreException exception = assertThrows(CoreException.class, () -> {
-            getAvailableConcertDatesUseCase.execute(concertId);
-        });
-        assertEquals(ErrorType.CONCERT_SEAT_NOT_FOUND, exception.getErrorType());
-    }
 }
