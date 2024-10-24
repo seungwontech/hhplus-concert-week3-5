@@ -17,17 +17,19 @@ public enum ErrorType {
     CONCERT_NOT_FOUND(ErrorCode.NOT_FOUND, "콘서트를 찾을 수 없습니다.", LogLevel.WARN),
 
     CONCERT_SEAT_NOT_FOUND(ErrorCode.NOT_FOUND, "콘서트 좌석을 찾을 수 없습니다.", LogLevel.WARN),
-    CONCERT_SEAT_PRICE_NOT_FOUND(ErrorCode.NOT_FOUND,"좌석의 가격정보가 없습니다.", LogLevel.ERROR),
     CONCERT_SEAT_AVAILABLE_NOT_FOUND(ErrorCode.NOT_FOUND, "콘서트 예약 가능한 좌석이 없습니다.", LogLevel.WARN),
+    CONCERT_SEAT_ALREADY_RESERVED(ErrorCode.NOT_FOUND, "이미 예약된 좌석입니다.", LogLevel.ERROR),
 
     CONCERT_SCHEDULE_NOT_FOUND(ErrorCode.NOT_FOUND, "콘서트의 일정이 없습니다.", LogLevel.WARN),
     CONCERT_SCHEDULE_AVAILABLE_NOT_FOUND(ErrorCode.NOT_FOUND, "콘서트 예약 가능한 일정이 없습니다.", LogLevel.WARN),
 
     CONCERT_RESERVATION_NOT_FOUND(ErrorCode.NOT_FOUND, "예약한 좌석이 없습니다.", LogLevel.WARN),
 
+    DUPLICATE_CONCERT_PAYMENTS(ErrorCode.CLIENT_ERROR, "예약한 좌석이 없습니다.", LogLevel.ERROR),
+
     WAITING_QUEUE_NOT_FOUND(ErrorCode.NOT_FOUND, "대기열을 찾을 수 없습니다.", LogLevel.WARN);
 
-   
+
 
     private final ErrorCode errorCode;
     private final String message;
