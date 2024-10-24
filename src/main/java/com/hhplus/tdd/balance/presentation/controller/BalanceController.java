@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class BalanceController {
     private final BalanceService balanceService;
     // 잔액 조회
-    @GetMapping("/balance/")
+    @GetMapping("/balance")
     public ResponseEntity<BalanceRes> balance(@RequestHeader("user-id") Long userId){
         Balance res = balanceService.getBalance(userId);
         return ResponseEntity.ok(BalanceRes.builder()

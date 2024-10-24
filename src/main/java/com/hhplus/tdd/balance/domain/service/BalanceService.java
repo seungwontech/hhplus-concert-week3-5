@@ -18,6 +18,7 @@ public class BalanceService {
     private final BalanceRepository balanceRepository;
 
     // 잔액 조회
+    @Transactional
     public Balance getBalance(Long userId) {
         Balance result = balanceRepository.getBalance(userId);
         if (result == null) {

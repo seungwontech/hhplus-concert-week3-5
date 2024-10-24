@@ -27,7 +27,7 @@ public class ConcertController {
     private final ConcertPaymentUseCase concertPaymentUseCase;
 
     // 예약 가능 날짜 조회 API
-    @GetMapping("/{concertId}/schedules/")
+    @GetMapping("/{concertId}/schedules")
     public ResponseEntity<ScheduleRes> concertSchedules(@PathVariable Long concertId) {
         ScheduleRes res = getAvailableConcertDatesUseCase.execute(concertId);
         return ResponseEntity.ok(res);
@@ -42,9 +42,7 @@ public class ConcertController {
 
     // 좌석 예약 API
     @PostMapping("/{concertId}/schedules/{concertScheduleId}/seats/reservation")
-    public ResponseEntity<ConcertReservationRes> concertReservation(
-            @RequestHeader("token") String token
-            , @PathVariable Long concertId
+    public ResponseEntity<ConcertReservationRes> concertReservation(@PathVariable Long concertId
             , @PathVariable Long concertScheduleId
             , @RequestBody ConcertReservationReq concertReservationReq) {
         ConcertReservationResult res = concertReservationUseCase.execute(concertId, concertScheduleId, concertReservationReq);
