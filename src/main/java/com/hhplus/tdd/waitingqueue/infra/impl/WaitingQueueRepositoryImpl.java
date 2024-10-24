@@ -40,12 +40,8 @@ public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     }
 
     @Override
-    public WaitingQueue getWaitingQueueTokenOrThrow(String token) {
+    public WaitingQueue getWaitingQueueToken(String token) {
         WaitingQueueJpaEntity entity = waitingQueueJpaRepository.findByToken(token);
-        if (entity == null) {
-            log.warn("대기열을 찾울 수 없습니다. token: {}", token);
-            throw new CoreException(ErrorType.WAITING_QUEUE_NOT_FOUND, token);
-        }
         return waitingQueueMapper.toDomain(entity);
     }
 

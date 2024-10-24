@@ -101,7 +101,7 @@ public class ConcertPaymentUseCase {
     }
 
     public void expiredWaitingQueue(String token) {
-        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueTokenOrThrow(token);
+        WaitingQueue waitingQueue = waitingQueueRepository.getWaitingQueueToken(token);
         waitingQueue.expire();
         waitingQueueRepository.save(waitingQueue);
     }

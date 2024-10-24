@@ -11,5 +11,5 @@ public interface WaitingQueueRepository {
 
     Long getLastActivePositionOrThrow();
 
-    WaitingQueue getWaitingQueueTokenOrThrow(String token);
+    WaitingQueue getWaitingQueueToken(String token);
 }
