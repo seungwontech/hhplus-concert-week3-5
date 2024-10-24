@@ -1,10 +1,8 @@
 package com.hhplus.tdd.concert.application.usecase;
 
-import com.hhplus.tdd.concert.domain.model.ConcertPayment;
-import com.hhplus.tdd.concert.domain.model.ConcertPaymentResult;
-import com.hhplus.tdd.concert.domain.model.ConcertSeat;
-import com.hhplus.tdd.concert.domain.model.PaymentStatus;
+import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
+import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.config.exception.CoreException;
@@ -14,6 +12,7 @@ import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,6 +28,9 @@ public class ConcertPaymentUseCase {
 
     private final ConcertSeatRepository concertSeatRepository;
 
+    private final ConcertReservationRepository concertReservationRepository;
+
+    @Transactional
     public ConcertPaymentResult execute(String token, ConcertPaymentReq concertPaymentReq) {
 
         List<ConcertSeat> concertSeats = concertSeatRepository.getConcertSeatIdIn(concertPaymentReq.getConcertSeatIds());
@@ -38,9 +40,20 @@ public class ConcertPaymentUseCase {
             throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, concertSeats);
         }
 
+        List<ConcertPayment> concertPaymenteds = concertPaymentRepository.findByUserIdAndConcertReservationIdIn(concertPaymentReq.getUserId(),concertPaymentReq.getConcertReservationId());
+
+        if (concertPaymenteds != null) {
+            throw new CoreException(ErrorType.DUPLICATE_CONCERT_PAYMENTS, concertPaymenteds);
+        }
+
         List<ConcertPayment> concertPayments = processConcertPayment(concertPaymentReq, concertSeats);
 
         saveConcertPayments(concertPayments);
+
+        // 예약상태 CONFIRMED
+        List<ConcertReservation> concertReservation = concertReservationRepository.findByConcertReservationIdIn(concertPaymentReq.getConcertReservationId());
+        concertReservation.forEach(cr -> cr.setReservationStatus());
+        concertReservationRepository.saveAll(concertReservation);
 
         expiredWaitingQueue(token);
 

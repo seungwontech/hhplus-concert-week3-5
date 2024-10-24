@@ -36,4 +36,16 @@ public class ConcertPaymentRepositoryImpl implements ConcertPaymentRepository {
                 .map(concertPaymentMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ConcertPayment> findByUserIdAndConcertReservationIdIn(Long userId, Long[] concertReservationId) {
+        List<ConcertPaymentJpaEntity> entities = concertPaymentJpaRepository.findByUserIdAndConcertReservationIdIn(userId, concertReservationId);
+        if (entities.isEmpty()) {
+            return null;
+        }
+        return entities.stream()
+                .map(concertPaymentMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
 }

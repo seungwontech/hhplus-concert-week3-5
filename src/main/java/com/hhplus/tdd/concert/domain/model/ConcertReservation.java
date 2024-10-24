@@ -23,4 +23,7 @@ public class ConcertReservation {
         return new ConcertReservation(concertReservationId, userId, concertScheduleId, concertSeatId, reservationStatus, reservationDate, reservationExpiry);
     }
 
+    public void setReservationStatus () {
+        this.reservationStatus = ReservationStatus.CONFIRMED.toString();
+    }
 }
