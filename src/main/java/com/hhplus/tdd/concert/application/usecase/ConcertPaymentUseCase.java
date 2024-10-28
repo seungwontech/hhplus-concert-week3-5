@@ -52,7 +52,7 @@ public class ConcertPaymentUseCase {
 
         // 예약상태 CONFIRMED
         List<ConcertReservation> concertReservation = concertReservationRepository.findByConcertReservationIdIn(concertPaymentReq.getConcertReservationId());
-        concertReservation.forEach(cr -> cr.setReservationStatus());
+        concertReservation.forEach(ConcertReservation::setReservationStatus);
         concertReservationRepository.saveAll(concertReservation);
 
         expiredWaitingQueue(token);
