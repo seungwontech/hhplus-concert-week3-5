@@ -38,7 +38,6 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     public List<ConcertSeat> getConcertSeatsByScheduleOrThrow(Long concertId, Long concertScheduleId, String reserveYn) {
         List<ConcertSeatJpaEntity> entities = concertSeatJpaRepository.findByConcertIdAndConcertScheduleIdAndReserveYn(concertId, concertScheduleId, reserveYn);
         if (entities.isEmpty()) {
-            log.warn("콘서트 좌석을 찾을 수 없습니다. concertId: {}, concertScheduleId: {}", concertId, concertScheduleId);
             throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, entities);
         }
 

@@ -36,7 +36,6 @@ public class ConcertPaymentUseCase {
         List<ConcertSeat> concertSeats = concertSeatRepository.getConcertSeatIdIn(concertPaymentReq.getConcertSeatIds());
 
         if (concertSeats.isEmpty()) {
-            log.warn("콘서트 좌석을 찾을 수 없습니다. concertSeats: {}", (Object) concertPaymentReq.getConcertSeatIds());
             throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, concertSeats);
         }
 

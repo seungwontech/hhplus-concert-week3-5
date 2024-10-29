@@ -26,12 +26,10 @@ public class Balance {
     public Balance charge(int amount) {
 
         if (amount <= 0) {
-            log.warn("충전 금액은 0보다 커야 합니다. userId: {}, amount: {} ", userId, amount);
             throw new CoreException(ErrorType.BALANCE_LESS_THAN_ZERO, amount);
         }
 
         if ((long) balanceAmount + amount > Integer.MAX_VALUE) {
-            log.warn("충전 금액이 초과되었습니다. userId: {}, amount: {} ", userId, amount);
             throw new CoreException(ErrorType.BALANCE_LIMIT_AMOUNT, amount);
         }
 
@@ -41,12 +39,10 @@ public class Balance {
     public Balance use(int amount) {
 
         if (amount <= 0) {
-            log.warn("사용 금액은 0보다 커야합니다.userId: {}, amount: {}", userId, amount);
             throw new CoreException(ErrorType.BALANCE_LESS_THAN_ZERO, amount);
         }
 
         if (balanceAmount - amount < 0) {
-            log.warn("사용하려는 금액이 잔액을 초과할 수 없습니다. userId: {}, amount: {}", userId, amount);
             throw new CoreException(ErrorType.BALANCE_EXCEEDS_AVAILABLE, amount);
         }
 

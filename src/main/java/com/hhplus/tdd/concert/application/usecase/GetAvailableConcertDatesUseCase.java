@@ -34,7 +34,6 @@ public class GetAvailableConcertDatesUseCase {
         List<ConcertSchedule> schedules = concertScheduleRepository.getConcertSchedules(concertId);
 
         if (schedules.isEmpty()) {
-            log.warn("콘서트의 일정이 없습니다. concertId: {}", concertId);
             throw new CoreException(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, concertId);
         }
         

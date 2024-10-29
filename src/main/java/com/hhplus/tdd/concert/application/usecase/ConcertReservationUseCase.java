@@ -47,7 +47,6 @@ public class ConcertReservationUseCase {
 
             return buildReservationResult(concert, reservations, seatMap);
         } catch (OptimisticLockException e) {
-            log.error("좌석 예약 충돌 발생: {}", e.getMessage());
             throw new CoreException(ErrorType.CONCERT_SEAT_ALREADY_RESERVED, "이미 예약된 좌석입니다.");
         }
     }

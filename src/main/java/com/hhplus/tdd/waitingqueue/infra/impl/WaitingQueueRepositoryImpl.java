@@ -24,7 +24,6 @@ public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     public WaitingQueue getWaitingQueuePosition(Long userId) {
         WaitingQueueJpaEntity entity = waitingQueueJpaRepository.findByUserId(userId);
         if (entity == null) {
-            log.warn("대기열을 찾을 수 없습니다. userId: {}", userId);
             throw new CoreException(ErrorType.WAITING_QUEUE_NOT_FOUND, userId);
         }
         return waitingQueueMapper.toDomain(entity);
