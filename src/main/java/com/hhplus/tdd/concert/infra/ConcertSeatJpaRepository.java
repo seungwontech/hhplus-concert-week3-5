@@ -10,13 +10,8 @@ import java.util.List;
 public interface ConcertSeatJpaRepository extends JpaRepository<ConcertSeatJpaEntity, Long> {
     List<ConcertSeatJpaEntity> findByConcertId(Long concertId);
 
-    //낙관적락
     @Lock(LockModeType.OPTIMISTIC)
     List<ConcertSeatJpaEntity> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
-
-    //비관적락
-    // @Lock(LockModeType.PESSIMISTIC_WRITE)
-    //List<ConcertSeatJpaEntity> findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(Long concertId, Long concertScheduleId, Long[] concertSeatIds);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<ConcertSeatJpaEntity> findByConcertSeatIdIn(Long[] concertSeatIds);

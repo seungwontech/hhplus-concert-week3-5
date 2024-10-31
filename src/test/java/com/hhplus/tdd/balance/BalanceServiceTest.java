@@ -33,7 +33,7 @@ public class BalanceServiceTest {
     public void 잔액조회_성공() {
         // given
         Long userId = 1L;
-        Balance balance = new Balance(1L, 1L, 1000, LocalDateTime.now(), 1L);
+        Balance balance = new Balance(1L, 1L, 1000, LocalDateTime.now());
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
         // when
@@ -66,11 +66,11 @@ public class BalanceServiceTest {
         // given
         Long userId = 1L;
         int amount = 1000;
-        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now(), 1L);
+        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now());
 
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
-        doReturn(new Balance(balance.getBalanceId(), userId, 2000, LocalDateTime.now(), 1L))
+        doReturn(new Balance(balance.getBalanceId(), userId, 2000, LocalDateTime.now()))
                 .when(balanceRepository).save(any(Balance.class));
 
         //when
@@ -87,7 +87,7 @@ public class BalanceServiceTest {
         // given
         Long userId = 1L;
         int amount = -500; // 0보다 작은 금액
-        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now(), 1L);
+        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now());
 
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
@@ -101,7 +101,7 @@ public class BalanceServiceTest {
         // given
         Long userId = 1L;
         int amount = Integer.MAX_VALUE; // 0보다 작은 금액
-        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now(), 1L);
+        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now());
 
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
@@ -115,11 +115,11 @@ public class BalanceServiceTest {
         // given
         Long userId = 1L;
         int amount = 1000;
-        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now(),1L);
+        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now());
 
         doReturn(balance).when(balanceRepository).getBalance(userId);
 
-        doReturn(new Balance(balance.getBalanceId(), userId, 0, LocalDateTime.now(), 1L))
+        doReturn(new Balance(balance.getBalanceId(), userId, 0, LocalDateTime.now()))
                 .when(balanceRepository).save(any(Balance.class));
 
         //when
@@ -136,7 +136,7 @@ public class BalanceServiceTest {
         // given
         Long userId = 1L;
         int amount = Integer.MIN_VALUE;
-        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now(), 1L);
+        Balance balance = new Balance(1L, userId, 1000, LocalDateTime.now());
 
         doReturn(balance).when(balanceRepository).getBalance(userId);
 

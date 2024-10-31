@@ -37,7 +37,7 @@ VALUES (1, 1, 50000, 'SUCCESS', NOW()),
        (2, 2, 50000, 'PENDING', NOW()),
        (3, 3, 70000, 'SUCCESS', NOW());
 
-INSERT INTO hhplus.BALANCE (user_id, balance_amount, balance_updated, version)
-VALUES (1, 300000, NOW(),1),
-       (2, 150000, NOW(),1),
-       (3, 50000, NOW(),1);
+INSERT INTO hhplus.BALANCE (user_id, balance_amount, balance_updated)
+VALUES (1, 300000, NOW()),
+       (2, 150000, NOW()),
+       (3, 50000, NOW());

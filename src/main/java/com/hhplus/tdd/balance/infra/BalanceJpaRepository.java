@@ -7,11 +7,6 @@ import org.springframework.data.jpa.repository.Lock;
 
 
 public interface BalanceJpaRepository extends JpaRepository<BalanceJpaEntity, Long> {
-    // 비관적락
-    //@Lock(LockModeType.PESSIMISTIC_WRITE)
-    //BalanceJpaEntity findByUserId(Long userId);
-
-    //낙관적락
-    @Lock(LockModeType.OPTIMISTIC)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     BalanceJpaEntity findByUserId(Long userId);
 }

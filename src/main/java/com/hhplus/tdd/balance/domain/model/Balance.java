@@ -19,10 +19,9 @@ public class Balance {
     private Long userId;
     private int balanceAmount;
     private LocalDateTime balanceUpdated;
-    private Long version;
 
-    public static Balance of(Long balanceId, Long userId, int balanceAmount, LocalDateTime balanceUpdated, Long version) {
-        return new Balance(balanceId, userId, balanceAmount, balanceUpdated, version);
+    public static Balance of(Long balanceId, Long userId, int balanceAmount, LocalDateTime balanceUpdated) {
+        return new Balance(balanceId, userId, balanceAmount, balanceUpdated);
     }
     public Balance charge(int amount) {
 
@@ -34,7 +33,7 @@ public class Balance {
             throw new CoreException(ErrorType.BALANCE_LIMIT_AMOUNT, amount);
         }
 
-        return new Balance(balanceId, userId, balanceAmount + amount,  LocalDateTime.now(), version);
+        return new Balance(balanceId, userId, balanceAmount + amount,  LocalDateTime.now());
     }
 
     public Balance use(int amount) {
@@ -47,6 +46,6 @@ public class Balance {
             throw new CoreException(ErrorType.BALANCE_EXCEEDS_AVAILABLE, amount);
         }
 
-        return new Balance(balanceId, userId, balanceAmount - amount,  LocalDateTime.now(), version);
+        return new Balance(balanceId, userId, balanceAmount - amount,  LocalDateTime.now());
     }
 }

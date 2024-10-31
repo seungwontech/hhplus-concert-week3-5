@@ -28,11 +28,7 @@ public class BalanceJpaEntity {
     @Column(name = "balance_updated", nullable = false)
     private LocalDateTime balanceUpdated;
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private Long version = 1L;
-
-    public static BalanceJpaEntity of(Long balanceId, Long userId, int balanceAmount, LocalDateTime balanceUpdated, Long version) {
-        return new BalanceJpaEntity(balanceId, userId, balanceAmount, balanceUpdated, version);
+    public static BalanceJpaEntity of(Long balanceId, Long userId, int balanceAmount, LocalDateTime balanceUpdated) {
+        return new BalanceJpaEntity(balanceId, userId, balanceAmount, balanceUpdated);
     }
 }
