@@ -39,7 +39,6 @@ public class ConcertScheduleRepositoryImpl implements ConcertScheduleRepository 
     public ConcertSchedule getConcertScheduleOrThrow(Long concertId, Long concertScheduleId) {
         ConcertScheduleJpaEntity entity = concertScheduleJpaRepository.findByConcertIdAndConcertScheduleId(concertId, concertScheduleId);
         if (entity == null) {
-            log.warn("콘서트의 일정이 없습니다. concertId: {}, concertScheduleId: {}", concertId, concertScheduleId);
             throw new CoreException(ErrorType.CONCERT_SCHEDULE_NOT_FOUND, concertScheduleId);
         }
         return concertScheduleMapper.toDomain(entity);

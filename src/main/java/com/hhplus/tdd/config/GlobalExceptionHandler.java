@@ -47,14 +47,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * 에러 타입에 따라 HTTP 상태 코드 매핑
      */
     private HttpStatus mapToHttpStatus(ErrorCode errorCode) {
-        switch (errorCode) {
-            case NOT_FOUND:
-                return HttpStatus.NOT_FOUND;
-            case CLIENT_ERROR:
-                return HttpStatus.BAD_REQUEST;
-            default:
-                return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+        return switch (errorCode) {
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case CLIENT_ERROR -> HttpStatus.BAD_REQUEST;
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
     }
 
     /**
@@ -63,15 +60,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private void logError(ErrorType errorType) {
         LogLevel logLevel = errorType.getLogLevel();
         switch (logLevel) {
-            case WARN:
-                log.warn(errorType.getMessage());
-                break;
-            case ERROR:
-                log.error(errorType.getMessage());
-                break;
-            default:
-                log.info(errorType.getMessage());
-                break;
+            case WARN -> log.warn(errorType.getMessage());
+            case ERROR -> log.error(errorType.getMessage());
+            default -> log.info(errorType.getMessage());
         }
     }
 }

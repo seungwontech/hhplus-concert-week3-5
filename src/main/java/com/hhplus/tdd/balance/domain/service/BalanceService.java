@@ -22,7 +22,6 @@ public class BalanceService {
     public Balance getBalance(Long userId) {
         Balance result = balanceRepository.getBalance(userId);
         if (result == null) {
-            log.warn("Balance not found for userId: {}", userId);
             throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
         }
         return result;

@@ -31,12 +31,6 @@ public class ConcertReservationUseCase {
     @Transactional
     public ConcertReservationResult execute(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
         try {
-            Concert concert = concertRepository.getConcertOrThrow(concertId);
-
-            List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
-
-            Map<Long, ConcertSeat> seatMap = mapSeatByIds(seats, reservationReq.getConcertSeatIds());
-
             List<ConcertReservation> reservations = createReservationList(concertScheduleId, reservationReq.getConcertSeatIds(), reservationReq.getUserId());
 
             concertReservationRepository.saveAll(reservations);
@@ -45,9 +39,14 @@ public class ConcertReservationUseCase {
 
             concertSeatRepository.saveAll(updatedSeats);
 
+            Concert concert = concertRepository.getConcertOrThrow(concertId);
+
+            List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId);
+
+            Map<Long, ConcertSeat> seatMap = mapSeatByIds(seats, reservationReq.getConcertSeatIds());
+
             return buildReservationResult(concert, reservations, seatMap);
         } catch (OptimisticLockException e) {
-            log.error("좌석 예약 충돌 발생: {}", e.getMessage());
             throw new CoreException(ErrorType.CONCERT_SEAT_ALREADY_RESERVED, "이미 예약된 좌석입니다.");
         }
     }
@@ -63,21 +62,6 @@ public class ConcertReservationUseCase {
             }
         }
         return seatMap;
-    }
-
-    // 좌석의 예약 여부를 'Y' 상태로 업데이트하고, 매핑된 좌석 리스트를 반환하는 메서드.
-    public List<ConcertSeat> markSeatsAsReserved(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
-
-        List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
-
-        for (ConcertSeat seat : concertSeats) {
-            if (!"N".equals(seat.getReserveYn())) {
-                throw new CoreException(ErrorType.CONCERT_SEAT_ALREADY_RESERVED, "이미 예약된 좌석이 있습니다.");
-            }
-            seat.setAsReserved();
-        }
-
-        return concertSeats;
     }
 
     public List<ConcertReservation> createReservationList(Long concertScheduleId, Long[] concertSeatIds, Long userId) {
@@ -98,6 +82,21 @@ public class ConcertReservationUseCase {
         }
 
         return reservations;
+    }
+
+    // 좌석의 예약 여부를 'Y' 상태로 업데이트하고, 매핑된 좌석 리스트를 반환하는 메서드.
+    public List<ConcertSeat> markSeatsAsReserved(Long concertId, Long concertScheduleId, Long[] concertSeatIds) {
+
+        List<ConcertSeat> concertSeats = concertSeatRepository.findByConcertIdAndConcertScheduleIdAndConcertSeatIdIn(concertId, concertScheduleId, concertSeatIds);
+
+        for (ConcertSeat seat : concertSeats) {
+            if (!"N".equals(seat.getReserveYn())) {
+                throw new CoreException(ErrorType.CONCERT_SEAT_ALREADY_RESERVED, "이미 예약된 좌석이 있습니다.");
+            }
+            seat.setAsReserved();
+        }
+
+        return concertSeats;
     }
 
     public ConcertReservationResult buildReservationResult(Concert concert, List<ConcertReservation> reservations, Map<Long, ConcertSeat> seatMap) {
