@@ -56,7 +56,7 @@ public class ConcertReservationUseCaseTest {
         ConcertReservationReq reservationReq = new ConcertReservationReq(userId, seatIds);
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
-        doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
+        doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId);
         doNothing().when(concertSeatRepository).saveAll(anyList());
         doNothing().when(concertReservationRepository).saveAll(anyList());
         // when

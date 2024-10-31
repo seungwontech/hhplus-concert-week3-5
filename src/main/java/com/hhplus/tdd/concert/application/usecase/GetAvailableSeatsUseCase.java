@@ -33,7 +33,7 @@ public class GetAvailableSeatsUseCase {
 
         ConcertSchedule schedule = concertScheduleRepository.getConcertScheduleOrThrow(concertId, concertScheduleId);
 
-        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId);
 
         if (seats.isEmpty()) {
             throw new CoreException(ErrorType.CONCERT_SEAT_NOT_FOUND, seats);

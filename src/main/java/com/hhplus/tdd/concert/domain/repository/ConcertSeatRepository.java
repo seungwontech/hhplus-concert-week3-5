@@ -12,7 +12,7 @@ public interface ConcertSeatRepository {
 
     void saveAll(List<ConcertSeat> concertSeats);
 
-    List<ConcertSeat> getConcertSeatsByScheduleOrThrow(Long concertId, Long concertScheduleId, String reserveYn);
+    List<ConcertSeat> getConcertSeatsByScheduleOrThrow(Long concertId, Long concertScheduleId);
 
     List<ConcertSeat> getConcertSeatIdIn(Long[] concertSeatIds);
 }

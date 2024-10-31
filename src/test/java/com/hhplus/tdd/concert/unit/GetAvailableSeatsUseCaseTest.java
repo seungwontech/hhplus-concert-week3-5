@@ -53,7 +53,7 @@ public class GetAvailableSeatsUseCaseTest {
 
         doReturn(concert).when(concertRepository).getConcertOrThrow(concertId);
         doReturn(schedule).when(concertScheduleRepository).getConcertScheduleOrThrow(concertId, concertScheduleId);
-        doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId, "N");
+        doReturn(seats).when(concertSeatRepository).getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId);
 
         // when
         SeatRes seatRes = getAvailableSeatsUseCase.execute(concertId, concertScheduleId);
