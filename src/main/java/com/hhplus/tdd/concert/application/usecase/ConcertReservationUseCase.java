@@ -51,6 +51,26 @@ public class ConcertReservationUseCase {
         }
     }
 
+    @Transactional
+    public ConcertReservationResult execute_pessimistic(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
+
+        List<ConcertReservation> reservations = createReservationList(concertScheduleId, reservationReq.getConcertSeatIds(), reservationReq.getUserId());
+
+        concertReservationRepository.saveAll(reservations);
+
+        List<ConcertSeat> updatedSeats = markSeatsAsReserved(concertId, concertScheduleId, reservationReq.getConcertSeatIds());
+
+        concertSeatRepository.saveAll(updatedSeats);
+
+        Concert concert = concertRepository.getConcertOrThrow(concertId);
+
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId);
+
+        Map<Long, ConcertSeat> seatMap = mapSeatByIds(seats, reservationReq.getConcertSeatIds());
+
+        return buildReservationResult(concert, reservations, seatMap);
+    }
+
     // 예약할 좌석 ID와 좌석을 맵핑하는 메서드
     public Map<Long, ConcertSeat> mapSeatByIds(List<ConcertSeat> seats, Long[] concertSeatIds) {
         Map<Long, ConcertSeat> seatMap = new HashMap<>();
