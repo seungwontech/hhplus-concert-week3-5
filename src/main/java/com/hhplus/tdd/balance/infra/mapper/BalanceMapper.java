@@ -11,6 +11,7 @@ public class BalanceMapper {
                 , entity.getUserId()
                 , entity.getBalanceAmount()
                 , entity.getBalanceUpdated()
+                , entity.getVersion()
         );
     }
 
@@ -19,6 +20,7 @@ public class BalanceMapper {
                 , balance.getUserId()
                 , balance.getBalanceAmount()
                 , balance.getBalanceUpdated()
+                , balance.getVersion()
         );
     }
 }

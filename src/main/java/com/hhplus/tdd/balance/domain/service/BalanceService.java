@@ -7,6 +7,9 @@ import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,22 @@ public class BalanceService {
 
     @Transactional
     public Balance charge(Long userId, int amount) {
+        Balance balance = balanceRepository.getBalance(userId);
+
+        Balance result = balance.charge(amount);
+
+        balanceRepository.save(result);
+
+        return result;
+    }
+
+    @Transactional
+    @Retryable(
+            retryFor = {ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 2,
+            backoff = @Backoff(100)
+    )
+    public Balance charge_optimistic(Long userId, int amount) {
         Balance balance = balanceRepository.getBalance(userId);
 
         Balance result = balance.charge(amount);

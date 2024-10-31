@@ -14,7 +14,7 @@ public class BalanceTest {
     @Test
     void 충전금액_잔액증가_성공() {
         // Given
-        Balance balance = new Balance(1L, 1L, 1000, LocalDateTime.now());
+        Balance balance = new Balance(1L, 1L, 1000, LocalDateTime.now(),1L);
         int chargeAmount = 500;
 
         // When
@@ -30,7 +30,7 @@ public class BalanceTest {
     @Test
     void 충전금액_금액이0이거나0보다작을때_실패() {
         // Given
-        Balance balance = new Balance(1L, 1L, 1000, LocalDateTime.now());
+        Balance balance = new Balance(1L, 1L, 1000, LocalDateTime.now(), 1L);
         int chargeAmount1 = 0;
 
         // When & Then
@@ -48,7 +48,7 @@ public class BalanceTest {
     @Test
     void 잔액최대로인해충전_실패() {
         // Given
-        Balance balance = new Balance(1L, 1L, Integer.MAX_VALUE, LocalDateTime.now());
+        Balance balance = new Balance(1L, 1L, Integer.MAX_VALUE, LocalDateTime.now(),1L);
         int chargeAmount = 1;
 
         // When & Then
@@ -59,7 +59,7 @@ public class BalanceTest {
     @Test
     void 잔액과충전금액이최대로인해_실패() {
         // Given
-        Balance balance = new Balance(1L, 1L, Integer.MAX_VALUE - 1, LocalDateTime.now());
+        Balance balance = new Balance(1L, 1L, Integer.MAX_VALUE - 1, LocalDateTime.now(),1L);
         int chargeAmount = 3;
 
         // When & Then
@@ -70,7 +70,7 @@ public class BalanceTest {
     @Test
     void 잔액사용이_성공해야한다() {
         // Given
-        Balance balance = new Balance(1L, 1L, 500, LocalDateTime.now());
+        Balance balance = new Balance(1L, 1L, 500, LocalDateTime.now(), 1L);
         int useAmount = 300;
 
         // When
@@ -84,7 +84,7 @@ public class BalanceTest {
     @Test
     void 잔액보다사용금액이크면_실패() {
         // Given
-        Balance balance = new Balance(1L, 1L, 500, LocalDateTime.now());
+        Balance balance = new Balance(1L, 1L, 500, LocalDateTime.now(), 1L);
         int useAmount = 600;
 
         // When & Then
