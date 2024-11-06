@@ -21,3 +21,7 @@ spring:
       mode: always
       continue-on-error: true
       data-locations: classpath:sql/data.sql
+  data:
+    redis:
+      host: localhost
+      port: 6379

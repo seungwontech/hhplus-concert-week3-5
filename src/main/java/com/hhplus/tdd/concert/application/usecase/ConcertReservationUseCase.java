@@ -8,6 +8,7 @@ import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
 import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
 import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
+import com.hhplus.tdd.config.redis.DistributedLock;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,25 @@ public class ConcertReservationUseCase {
         } catch (OptimisticLockException e) {
             throw new CoreException(ErrorType.CONCERT_SEAT_ALREADY_RESERVED, "이미 예약된 좌석입니다.");
         }
+    }
+
+    @DistributedLock(key = "#concertScheduleId")
+    public ConcertReservationResult execute_di(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
+        List<ConcertReservation> reservations = createReservationList(concertScheduleId, reservationReq.getConcertSeatIds(), reservationReq.getUserId());
+
+        concertReservationRepository.saveAll(reservations);
+
+        List<ConcertSeat> updatedSeats = markSeatsAsReserved(concertId, concertScheduleId, reservationReq.getConcertSeatIds());
+
+        concertSeatRepository.saveAll(updatedSeats);
+
+        Concert concert = concertRepository.getConcertOrThrow(concertId);
+
+        List<ConcertSeat> seats = concertSeatRepository.getConcertSeatsByScheduleOrThrow(concertId, concertScheduleId);
+
+        Map<Long, ConcertSeat> seatMap = mapSeatByIds(seats, reservationReq.getConcertSeatIds());
+
+        return buildReservationResult(concert, reservations, seatMap);
     }
 
     // 예약할 좌석 ID와 좌석을 맵핑하는 메서드
