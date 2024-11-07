@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class RedisTokenScheduler {
     @Scheduled(fixedRate = 60000)
     public void scheduleTokenAddAndMove() {
         for (Long userId : userIds) {
-            String token = "userToken" + userId;
+            String token = UUID.randomUUID().toString();
             addTokenToWaiting(userId, token);
         }
 
