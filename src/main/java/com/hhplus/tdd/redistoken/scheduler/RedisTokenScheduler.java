@@ -2,12 +2,14 @@ package com.hhplus.tdd.redistoken.scheduler;
 
 import com.hhplus.tdd.redistoken.domain.repository.RedisTokenCoreRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisTokenScheduler {
@@ -22,17 +24,11 @@ public class RedisTokenScheduler {
             addTokenToWaiting(userId, token);
         }
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
         redisTokenCoreRepository.moveTokensToActive();
     }
 
     public Long addTokenToWaiting(Long userId, String userToken) {
-        System.out.println("Adding token to waiting queue...");
+        log.info("Adding token to waiting queue...");
         return redisTokenCoreRepository.addWaitingToken(userId, userToken);
     }
 }
