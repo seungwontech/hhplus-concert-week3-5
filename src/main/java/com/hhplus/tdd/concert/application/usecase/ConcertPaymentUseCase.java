@@ -1,5 +1,7 @@
 package com.hhplus.tdd.concert.application.usecase;
 
+import com.hhplus.tdd.balance.domain.model.Balance;
+import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
 import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
@@ -30,6 +32,8 @@ public class ConcertPaymentUseCase {
 
     private final ConcertReservationRepository concertReservationRepository;
 
+    private final BalanceRepository balanceRepository;
+
     @Transactional
     public ConcertPaymentResult execute(String token, ConcertPaymentReq concertPaymentReq) {
 
@@ -55,10 +59,12 @@ public class ConcertPaymentUseCase {
         concertReservationRepository.saveAll(concertReservation);
 
         expiredWaitingQueue(token);
-
         int totalPrice = concertPayments.stream()
                 .mapToInt(ConcertPayment::getPaymentAmount)
                 .sum();
+
+        deductUserPoints(totalPrice, concertPaymentReq.getUserId());
+
         return ConcertPaymentResult.of(totalPrice);
     }
 
@@ -112,5 +118,15 @@ public class ConcertPaymentUseCase {
         waitingQueueRepository.save(waitingQueue);
     }
 
+
+    public void deductUserPoints(int totalPrice, Long userId) {
+        Balance balance = balanceRepository.getBalance(userId);
+
+        if (balance == null ) {
+            throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
+        }
+        balance.use(totalPrice);
+        balanceRepository.save(balance);
+    }
 }
 
