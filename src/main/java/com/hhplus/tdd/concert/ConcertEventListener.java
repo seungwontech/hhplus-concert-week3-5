@@ -52,7 +52,7 @@ public class ConcertEventListener {
             throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
         }
         Balance updatedBalance = balance.use(totalPrice);
-        balanceRepository.save(balance);
+        balanceRepository.save(updatedBalance);
 
         log.info("User points deducted for userId: {}, amount: {}", userId, totalPrice);
     }

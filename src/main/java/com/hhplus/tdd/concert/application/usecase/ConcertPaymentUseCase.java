@@ -131,7 +131,10 @@ public class ConcertPaymentUseCase {
         if (balance == null ) {
             throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
         }
-        balance.use(totalPrice);
+
+        Balance updatedBalance = balance.use(totalPrice);
+        balanceRepository.save(updatedBalance);
+
         balanceRepository.save(balance);
     }
 }
