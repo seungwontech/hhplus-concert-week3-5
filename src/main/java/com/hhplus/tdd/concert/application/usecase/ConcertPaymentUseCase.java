@@ -1,5 +1,9 @@
 package com.hhplus.tdd.concert.application.usecase;
 
+import com.hhplus.tdd.balance.domain.model.Balance;
+import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
+import com.hhplus.tdd.concert.ConcertEvent;
+import com.hhplus.tdd.concert.ConcertEventPublisher;
 import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
@@ -30,6 +34,10 @@ public class ConcertPaymentUseCase {
 
     private final ConcertReservationRepository concertReservationRepository;
 
+    private final BalanceRepository balanceRepository;
+
+    private final ConcertEventPublisher concertEventPublisher;
+
     @Transactional
     public ConcertPaymentResult execute(String token, ConcertPaymentReq concertPaymentReq) {
 
@@ -46,20 +54,24 @@ public class ConcertPaymentUseCase {
         }
 
         List<ConcertPayment> concertPayments = processConcertPayment(concertPaymentReq, concertSeats);
-
         saveConcertPayments(concertPayments);
 
-        // 예약상태 CONFIRMED
         List<ConcertReservation> concertReservation = concertReservationRepository.findByConcertReservationIdIn(concertPaymentReq.getConcertReservationId());
         concertReservation.forEach(ConcertReservation::setReservationStatus);
         concertReservationRepository.saveAll(concertReservation);
 
-        expiredWaitingQueue(token);
+        int totalPrice = concertPayments.stream().mapToInt(ConcertPayment::getPaymentAmount).sum();
+        ConcertPaymentResult result = ConcertPaymentResult.of(totalPrice);
 
-        int totalPrice = concertPayments.stream()
-                .mapToInt(ConcertPayment::getPaymentAmount)
-                .sum();
-        return ConcertPaymentResult.of(totalPrice);
+        Map<String, Object> eventData = Map.of(
+                "token", token,
+                "userId", concertPaymentReq.getUserId(),
+                "totalPrice", totalPrice
+        );
+
+        concertEventPublisher.notifyComplete(ConcertEvent.toCompleteEvent(eventData));
+
+        return result;
     }
 
     // 좌석별 가격을 계산하고, 예약 정보와 결제 정보를 매칭하여 ConcertPayment 객체 생성.
@@ -112,5 +124,15 @@ public class ConcertPaymentUseCase {
         waitingQueueRepository.save(waitingQueue);
     }
 
+
+    public void deductUserPoints(int totalPrice, Long userId) {
+        Balance balance = balanceRepository.getBalance(userId);
+
+        if (balance == null ) {
+            throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
+        }
+        balance.use(totalPrice);
+        balanceRepository.save(balance);
+    }
 }
 
