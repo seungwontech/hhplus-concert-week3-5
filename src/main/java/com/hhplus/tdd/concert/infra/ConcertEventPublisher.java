@@ -1,5 +1,6 @@
-package com.hhplus.tdd.concert;
+package com.hhplus.tdd.concert.infra;
 
+import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

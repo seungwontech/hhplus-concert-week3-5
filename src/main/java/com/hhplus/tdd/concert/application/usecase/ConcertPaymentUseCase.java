@@ -2,8 +2,8 @@ package com.hhplus.tdd.concert.application.usecase;
 
 import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
-import com.hhplus.tdd.concert.ConcertEvent;
-import com.hhplus.tdd.concert.ConcertEventPublisher;
+import com.hhplus.tdd.concert.domain.model.ConcertEvent;
+import com.hhplus.tdd.concert.infra.ConcertEventPublisher;
 import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;

@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert;
+package com.hhplus.tdd.concert.domain.model;
 
 import lombok.Builder;
 import lombok.Getter;
