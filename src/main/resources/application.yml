@@ -9,19 +9,22 @@ spring:
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.MySQL5Dialect
-      ddl-auto: create
+      ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     generate-ddl: true
     show-sql: true
     defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
-      continue-on-error: true
-      data-locations: classpath:sql/data.sql
   data:
     redis:
       host: localhost
       port: 6379
+  kafa:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringDeserializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
