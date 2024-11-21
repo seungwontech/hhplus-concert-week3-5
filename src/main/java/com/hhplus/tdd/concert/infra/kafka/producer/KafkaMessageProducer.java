@@ -19,7 +19,7 @@ public class KafkaMessageProducer {
     public void send(ConcertEvent event, String eventId) {
         try {
             String jsonObject = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send("payment_email_topic", eventId, jsonObject);
+            kafkaTemplate.send("payment_completed_topic", eventId, jsonObject);
             log.info("send payment eamil event: " + event);
         } catch (Exception e) {
             e.printStackTrace();

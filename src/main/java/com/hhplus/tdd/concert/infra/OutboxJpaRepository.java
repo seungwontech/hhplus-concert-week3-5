@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OutboxJpaRepository extends JpaRepository<OutboxJpaEntity, Long> {
 
-    List<OutboxJpaEntity> findByTopicAndStatus(String topic, String status);
+    List<OutboxJpaEntity> findByStatus(String status);
 
     OutboxJpaEntity findByTopicAndEventId(String topic, String eventId);
 }

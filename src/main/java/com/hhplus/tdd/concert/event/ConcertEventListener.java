@@ -36,7 +36,7 @@ public class ConcertEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void expireWaitingQueue(ConcertEvent event) {
-        if (!"COMPLETED".equals(event.getType())){
+        if (!"COMPLETED".equals(event.getType())) {
             return;
         }
 
@@ -73,7 +73,7 @@ public class ConcertEventListener {
         String payload = objectMapper.writeValueAsString(event);
         Outbox outbox = Outbox.builder()
                 .payload(payload)
-                .topic("payment_email_topic")
+                .topic("payment_completed_topic")
                 .status("WAITING")
                 .eventId(event.getEventId())
                 .build();

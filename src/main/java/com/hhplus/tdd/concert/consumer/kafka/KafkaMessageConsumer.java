@@ -18,7 +18,7 @@ public class KafkaMessageConsumer {
     private final OutboxService outboxService;
     private final ObjectMapper objectMapper;
 
-    final String TOPIC = "payment_email_topic";
+    final String TOPIC = "payment_completed_topic";
 
     @KafkaListener(topics = TOPIC, groupId = "send_email")
     public void sendEmailConsume(ConsumerRecord<String, String> record) throws JsonProcessingException {

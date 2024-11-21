@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -26,4 +28,8 @@ public class OutboxService {
         outboxRepository.save(Outbox);
     }
 
+    public List<Outbox> getTopicAndStatus(String status) {
+        List<Outbox> outboxes = outboxRepository.getTopicAndStatus(status);
+        return outboxes;
+    }
 }

@@ -5,7 +5,7 @@ import com.hhplus.tdd.concert.domain.model.Outbox;
 import java.util.List;
 
 public interface OutboxRepository {
-    List<Outbox> getTopicAndStatus(String topic, String status);
+    List<Outbox> getTopicAndStatus(String status);
 
     void save(Outbox outbox);
 

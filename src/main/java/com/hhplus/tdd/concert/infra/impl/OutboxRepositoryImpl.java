@@ -22,8 +22,8 @@ public class OutboxRepositoryImpl implements OutboxRepository {
     private final OutboxMapper outboxMapper;
 
     @Override
-    public List<Outbox> getTopicAndStatus(String topic, String status) {
-        List<OutboxJpaEntity> entities = outboxJpaRepository.findByTopicAndStatus(topic, status);
+    public List<Outbox> getTopicAndStatus(String status) {
+        List<OutboxJpaEntity> entities = outboxJpaRepository.findByStatus(status);
         if (entities.isEmpty()) {
             return null;
         }
