@@ -3,10 +3,10 @@ package com.hhplus.tdd.config.kafka;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class KafkaProducer {
 
@@ -16,4 +16,5 @@ public class KafkaProducer {
         kafkaTemplate.send(topic, message);
         log.info("Message sent: {}", message);
     }
+
 }

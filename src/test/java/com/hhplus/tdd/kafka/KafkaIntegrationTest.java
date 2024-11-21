@@ -17,9 +17,10 @@ public class KafkaIntegrationTest {
     @Autowired
     private KafkaConsumer consumer;
 
+
     @Test
     public void testKafka() throws Exception {
-        String topic = "my-topic";
+        String topic = "test-topic";
         String message = "Hello kafka";
 
         producer.sendMessage(topic, message);
@@ -28,4 +29,5 @@ public class KafkaIntegrationTest {
         // then
         assertThat(consumer.getMessage()).isEqualTo(message);
     }
+
 }
