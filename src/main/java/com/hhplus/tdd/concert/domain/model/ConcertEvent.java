@@ -12,12 +12,21 @@ public class ConcertEvent {
     private String eventId;
     private String type;
     private Map<String, Object> data;
+    private Outbox outboxData;
+
 
     public static ConcertEvent toCompleteEvent(Map data) {
         return ConcertEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .type("COMPLETED")
                 .data(data)
+                .build();
+    }
+    public static ConcertEvent toRetryCompleteEvent(String eventId, Outbox outbox) {
+        return ConcertEvent.builder()
+                .eventId(eventId)
+                .type("COMPLETED")
+                .outboxData(outbox)
                 .build();
     }
 

@@ -2,12 +2,12 @@ package com.hhplus.tdd.concert.application.usecase;
 
 import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
-import com.hhplus.tdd.concert.domain.model.ConcertEvent;
-import com.hhplus.tdd.concert.infra.ConcertEventPublisher;
 import com.hhplus.tdd.concert.domain.model.*;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
+import com.hhplus.tdd.concert.infra.ConcertEventPublisher;
+import com.hhplus.tdd.concert.infra.kafka.producer.KafkaMessageProducer;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;
 import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
@@ -37,6 +37,8 @@ public class ConcertPaymentUseCase {
     private final BalanceRepository balanceRepository;
 
     private final ConcertEventPublisher concertEventPublisher;
+
+    private final KafkaMessageProducer kafkaMessageProducer;
 
     @Transactional
     public ConcertPaymentResult execute(String token, ConcertPaymentReq concertPaymentReq) {
