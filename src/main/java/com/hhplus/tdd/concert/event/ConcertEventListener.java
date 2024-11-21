@@ -1,7 +1,8 @@
-package com.hhplus.tdd.concert;
+package com.hhplus.tdd.concert.event;
 
 import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
+import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
