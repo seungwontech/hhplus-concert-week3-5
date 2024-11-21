@@ -1,8 +1,13 @@
 package com.hhplus.tdd.concert.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
+import com.hhplus.tdd.concert.domain.model.Outbox;
+import com.hhplus.tdd.concert.domain.service.OutboxService;
+import com.hhplus.tdd.concert.infra.kafka.producer.KafkaMessageProducer;
 import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
@@ -23,6 +28,10 @@ public class ConcertEventListener {
 
     private final WaitingQueueRepository waitingQueueRepository;
     private final BalanceRepository balanceRepository;
+
+    private final OutboxService outboxService;
+    private final KafkaMessageProducer kafkaMessageProducer;
+    private final ObjectMapper objectMapper;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -58,17 +67,24 @@ public class ConcertEventListener {
         log.info("User points deducted for userId: {}, amount: {}", userId, totalPrice);
     }
 
+
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void saveOutbox(ConcertEvent event) throws JsonProcessingException {
+        String payload = objectMapper.writeValueAsString(event);
+        Outbox outbox = Outbox.builder()
+                .payload(payload)
+                .topic("payment_email_topic")
+                .status("WAITING")
+                .eventId(event.getEventId())
+                .build();
+        outboxService.save(outbox);
+        log.info("outBox save");
+    }
+
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
-    public void sendEmail(ConcertEvent event) {
-        if (!"COMPLETED".equals(event.getType())) {
-            return;
-        }
-        try {
-            Thread.sleep(5000); // 5초
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        log.info("이메일로 보내기");
+    public void sendkafka(ConcertEvent event) {
+        kafkaMessageProducer.send(event, event.getEventId());
+        log.info("send kafka ");
     }
 }
