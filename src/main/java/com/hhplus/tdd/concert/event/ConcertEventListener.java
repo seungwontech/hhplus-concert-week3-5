@@ -2,11 +2,10 @@ package com.hhplus.tdd.concert.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
+import com.hhplus.tdd.concert.domain.kafka.MessageProducer;
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 import com.hhplus.tdd.concert.domain.model.Outbox;
 import com.hhplus.tdd.concert.domain.service.OutboxService;
-import com.hhplus.tdd.concert.infra.kafka.producer.KafkaMessageProducer;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +23,9 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class ConcertEventListener {
 
     private final WaitingQueueRepository waitingQueueRepository;
-    private final BalanceRepository balanceRepository;
 
     private final OutboxService outboxService;
-    private final KafkaMessageProducer kafkaMessageProducer;
+    private final MessageProducer messageProducer;
     private final ObjectMapper objectMapper;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -60,7 +58,7 @@ public class ConcertEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
     public void sendkafka(ConcertEvent event) {
-        kafkaMessageProducer.send(event, event.getEventId());
+        messageProducer.send(event, event.getEventId());
         log.info("send kafka ");
     }
 }

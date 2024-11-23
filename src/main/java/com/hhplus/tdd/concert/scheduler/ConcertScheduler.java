@@ -2,8 +2,8 @@ package com.hhplus.tdd.concert.scheduler;
 
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 import com.hhplus.tdd.concert.domain.model.Outbox;
+import com.hhplus.tdd.concert.domain.kafka.MessageProducer;
 import com.hhplus.tdd.concert.domain.service.OutboxService;
-import com.hhplus.tdd.concert.infra.kafka.producer.KafkaMessageProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +17,7 @@ import java.util.List;
 public class ConcertScheduler {
 
     private final OutboxService outboxService;
-    private final KafkaMessageProducer kafkaMessageProducer;
+    private final MessageProducer messageProducer;
 
     @Scheduled(fixedRate = 60000)
     public void retryScheduler() {
@@ -28,7 +28,7 @@ public class ConcertScheduler {
         if (outboxes != null) {
             for (int i = 0; i < outboxes.size(); i++) {
                 ConcertEvent event = ConcertEvent.toRetryCompleteEvent(outboxes.get(i).getEventId(), outboxes.get(i));
-                kafkaMessageProducer.send(event, outboxes.get(i).getEventId());
+                messageProducer.send(event, outboxes.get(i).getEventId());
             }
         }
     }
