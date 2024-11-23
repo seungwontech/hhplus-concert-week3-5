@@ -63,6 +63,8 @@ public class ConcertPaymentUseCase {
         concertReservationRepository.saveAll(concertReservation);
 
         int totalPrice = concertPayments.stream().mapToInt(ConcertPayment::getPaymentAmount).sum();
+        deductUserPoints(totalPrice, concertPaymentReq.getUserId());
+
         ConcertPaymentResult result = ConcertPaymentResult.of(totalPrice);
 
         Map<String, Object> eventData = Map.of(
