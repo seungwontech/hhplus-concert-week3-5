@@ -2,14 +2,11 @@ package com.hhplus.tdd.concert.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hhplus.tdd.balance.domain.model.Balance;
 import com.hhplus.tdd.balance.domain.repository.BalanceRepository;
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 import com.hhplus.tdd.concert.domain.model.Outbox;
 import com.hhplus.tdd.concert.domain.service.OutboxService;
 import com.hhplus.tdd.concert.infra.kafka.producer.KafkaMessageProducer;
-import com.hhplus.tdd.config.exception.CoreException;
-import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.waitingqueue.domain.model.WaitingQueue;
 import com.hhplus.tdd.waitingqueue.domain.repository.WaitingQueueRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,27 +43,6 @@ public class ConcertEventListener {
         waitingQueueRepository.save(waitingQueue);
         log.info("Waiting queue expired for token: {}", token);
     }
-
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deductUserPoints(ConcertEvent event) {
-        if (!"COMPLETED".equals(event.getType())) {
-            return;
-        }
-
-        Long userId = (Long) event.getData().get("userId");
-        int totalPrice = (int) event.getData().get("totalPrice");
-
-        Balance balance = balanceRepository.getBalance(userId);
-        if (balance == null) {
-            throw new CoreException(ErrorType.BALANCE_NOT_FOUND, userId);
-        }
-        Balance updatedBalance = balance.use(totalPrice);
-        balanceRepository.save(updatedBalance);
-
-        log.info("User points deducted for userId: {}, amount: {}", userId, totalPrice);
-    }
-
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void saveOutbox(ConcertEvent event) throws JsonProcessingException {
