@@ -34,69 +34,197 @@
 > API를 Dynamic하게 호출하였습니다.
 
 ### 1. 테스트 시나리오 선정
-> Actor → 콘서트 날짜 조회 → 콘서트 좌석 조회 → 좌석 예약 → 결제
+> Actor → 토큰 조회 → 콘서트 날짜 조회 → 콘서트 좌석 조회 → 좌석 예약 → 결제
 
-테스트 설정
- - 가상 사용자 VUs: 50명
- - 테스트 지속 시간: 10초
- - 추가로 30초의 gracefulStop 시간이 포함
-  
-![step19_1.png](step19_1.png)
-![step19_2.png](step19_2.png)
+```
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+import { SharedArray } from 'k6/data';
 
-``
-http 요청 수|평균응답 시간| 최소응답 시간| 최대응답 시간| 중앙값(50%)| 상위 90%(p90)| 상위 95%(p95)| 요청 처리 속도|
----|---|---|---|---|---|---|---|
-400|1.59s|1.02ms|8.15s|21.08ms|4.85s|5.94s|19.16s|
+export const options = {
+    scenarios: {
+        load_test: {
+            executor: 'ramping-vus',
+            startVUs: 0,
+            stages: [
+                { duration: '1s', target: 100 },
+                { duration: '3s', target: 100 },
+                { duration: '1s', target: 0 },
+            ],
+        },
+    },
+};
 
-### 테스트 결과 분석
-- HTTP 요청 수: 400건 
-  > 400개의 요청이 처리되었습니다.
+const BASE_URL = 'http://localhost:8080/api/concerts';
+const QUEUE_URL = 'http://localhost:8080/api/waiting-queue';
 
-- 평균 응답 시간: 1.59초
-  > 대부분의 요청은 빠르게 처리되었으나, 일부 요청에서 긴 응답 시간이 발생했습니다.
+const users = new SharedArray('users', function () {
+    return Array.from({ length: 1000 }, (_, i) => i + 1);
+});
 
-- 최소 응답 시간: 1.02ms
-  > 가장 빠른 응답은 1.02ms로, 빠른 응답이 일부 있었습니다.
+function fetchToken(userId) {
+    const queueRes = http.get(`${QUEUE_URL}/position`, {
+        headers: {
+            'user-id': userId,
+        },
+    });
 
-- 최대 응답 시간: 8.15초
-  > 가장 긴 응답 시간은 8.15초로, 일부 요청에서 큰 지연이 발생했습니다.
+    check(queueRes, {
+        'Token fetched': (r) => r.status === 200
+    });
 
-- 중앙값(50%): 21.08ms
-  > 전체 요청 중 절반은 21.08ms 이하로 처리되었습니다.
+    const token = queueRes.json().token;
+    if (!token) {
+        console.error(`Failed to fetch token for user ${userId}`);
+    }
+    return token;
+}
 
-- 상위 90% 응답 시간(p90): 4.85초
-  > 90%의 요청은 4.85초 이하로 처리되었습니다.
+function fetchSchedule(concertId, token) {
+    const scheduleRes = http.get(`${BASE_URL}/${concertId}/schedules`, {
+        headers: { Token: token },
+    });
 
-- 상위 95% 응답 시간(p95): 5.94초
-  > 95%의 요청은 5.94초 이하로 처리되었습니다.
+    check(scheduleRes, {
+        'Concert schedules checked': (r) => r.status === 200,
+    });
 
-- 요청 처리 속도: 19.16 요청/초
-  > 초당 약 19개의 요청을 처리했습니다.
+    const schedules = scheduleRes.json().schedules;
 
-테스트 설정
-- 가상 사용자 VUs: 100명
-- 테스트 지속 시간: 20초
-- 추가로 30초의 gracefulStop 시간이 포함
+    if (schedules.length === 0) {
+        console.log('No available schedules for concert ' + concertId);
+        return;
+    }
 
-첫번째 보다 2배로 해서 테스트 해봤습니다.
+    return schedules[0].concertScheduleId; // 첫 번째 날짜 ID 반환
+}
 
-![step19_3.png](step19_3.png)
-![step19_4.png](step19_4.png)
+function fetchSeats(concertId, scheduleId, token) {
+    const seatsRes = http.get(`${BASE_URL}/${concertId}/schedules/${scheduleId}/seats`, {
+        headers: { Token: token },
+    });
 
-http 요청 수|평균응답 시간| 최소응답 시간| 최대응답 시간| 중앙값(50%)| 상위 90%(p90)| 상위 95%(p95)| 요청 처리 속도|
----|---|---|---|---|---|---|---|
-500|5.58s|2.63ms|24.22s|5.52ms|11.47s|14.48s|13.31s|
+    check(seatsRes, {'Seats availability checked': (r) => r.status === 200});
 
+    const seats = seatsRes.json().seats.map((seat) => seat.concertSeatId);
+    if (seats.length === 0) {
+        console.log('No available seats for concert ' + concertId + ' and schedule ' + scheduleId);
+        return;
+    }
 
-### 종합 분석
-응답 시간 개선 필요
-> 평균 응답 시간과 최대 응답시간, 상위 % 응답 시간이 비교적 긴 상태이다.  
-> 최대 응답 시간이 24초로 길어 성능 문제가 발생할 수 있는 지점이 존재 해보인다.  
+    return seats;
+}
 
-병목 지점 분석
-> 응답 시간이 긴 요청에 대한 병목현상을 분석해야한다.
-> DB 쿼리 최적화, 캐싱 전략, API 요청 분산 처리 등이 필요하다.
+function makeReservation(concertId, scheduleId, concertSeatId, userId, token) {
+    const reservationPayload = JSON.stringify({
+        concertSeatIds: [concertSeatId],
+        userId: userId,
+    });
 
-위 두 테스트는 캐싱, 인덱스를 추가하지 않은 상태에서 분석한 결과 입니다.
+    const reservationRes = http.post(
+        `${BASE_URL}/${concertId}/schedules/${scheduleId}/seats/reservation`,
+        reservationPayload,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Token: token,
+            },
+        }
+    );
 
+    check(reservationRes, {'Reservation made': (r) => r.status === 200});
+
+    return reservationRes.json().concertReservationId;
+}
+
+function makePayment(concertId, scheduleId, reservationId, seatId, userId, token) {
+    const paymentPayload = JSON.stringify({
+        userId: userId,
+        concertSeatIds: [seatId],
+        concertReservationId: [reservationId],
+    });
+
+    const paymentRes = http.post(
+        `${BASE_URL}/${concertId}/schedules/${scheduleId}/seats/reservation/payment`,
+        paymentPayload,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Token: token,
+            },
+        }
+    );
+
+    check(paymentRes, {'Payment completed': (r) => r.status === 200});
+
+}
+
+export default function () {
+    const userId = users[Math.floor(Math.random() * users.length)];
+
+    // Step 1: Fetch token
+    const token = fetchToken(userId);
+
+    if (!token) {
+        console.error('Token fetching failed for user ' + userId);
+        return;
+    }
+
+    const concertId = 1;
+
+    // Step 2: Fetch schedule
+    const scheduleId = fetchSchedule(concertId, token);
+    if (!scheduleId) {
+        console.error('No schedule available for concert ' + concertId);
+        return;
+    }
+    sleep(1);
+
+    // Step 3: Fetch seats
+    const seatIds = fetchSeats(concertId, scheduleId, token);
+    if (!seatIds || seatIds.length === 0) {
+        console.error('No seats available for concert ' + concertId + ' and schedule ' + scheduleId);
+        return;
+    }
+
+    const seatIndex = Math.floor(Math.random() * seatIds.length);
+    const seatId = seatIds[seatIndex];
+    sleep(1);
+
+    // Step 4: Make reservation
+    const reservationId = makeReservation(concertId, scheduleId, seatId, userId, token);
+    if (!reservationId) {
+        console.error('Reservation failed for user ' + userId);
+        return;
+    }
+    sleep(2);
+
+    // Step 5: Make payment
+    makePayment(concertId, scheduleId, reservationId, seatId, userId, token);
+    sleep(1);
+}
+
+```
+
+![step19_01.png](step19_01.png)
+![step19_02.png](step19_02.png)
+
+### 분석 결과
+1. http 요청 수
+    > 총 HTTP 요청 수: 496  
+    요청 처리 속도: 27.82 요청/초 (초당 약 28개 요청)
+    
+
+2. 응답시간
+   > 평균 응답 시간: 2.08초  
+   최소 응답 시간: 4.53ms  
+   최대 응답 시간: 8.59초  
+   중앙값 (50%): 1.38초  
+   상위 90% 응답 시간 (p90): 5.25초  
+   상위 95% 응답 시간 (p95): 6.2초  
+
+### 결론
+> 성능: 시스템의 응답 시간이 다소 높고, 상위 90% 이상의 응답 시간이 긴 문제가 있다. 특히 95%의 응답 시간까지 길어지므로 전체적인 응답 시간 최적화가 필요하다.  
+> 응답 시간: 응답 시간이 평균적으로 높고, 상위 90% 이상에서는 급격히 길어지는 경향이 있다. 이는 병목 지점이나 최적화가 필요한 코드 부분이 있을 수 있음을 의미한다.
+> 안정성: 1.61%의 실패율은 상당히 적은 수치로 보일 수 있지만, 실패율이 증가하면 큰 문제가 될 수 있다. 시스템의 안정성 보강이 필요하다. 
+> 사용자 경험: 긴 응답 시간과 실패율은 사용자 경험을 저하시킬 수 있습니다. 개선이 필요합니다.  

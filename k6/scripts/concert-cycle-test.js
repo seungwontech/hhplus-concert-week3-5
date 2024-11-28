@@ -1,38 +1,53 @@
 import http from 'k6/http';
-import {check, sleep} from 'k6';
+import { check, sleep } from 'k6';
+import { SharedArray } from 'k6/data';
 
 export const options = {
-    vus: 50,
-    duration: '10s'
+    scenarios: {
+        load_test: {
+            executor: 'ramping-vus',
+            startVUs: 0,
+            stages: [
+                { duration: '1s', target: 100 },
+                { duration: '3s', target: 100 },
+                { duration: '1s', target: 0 },
+            ],
+        },
+    },
 };
 
 const BASE_URL = 'http://localhost:8080/api/concerts';
-const tk_BASE_URL = 'http://localhost:8080/api/waiting-queue';
+const QUEUE_URL = 'http://localhost:8080/api/waiting-queue';
 
-export function setup() {
-    const userIds = Array.from({length: 50}, (_, index) => index + 1);
-    const tokens = userIds.map((userId) => {
-        const res = http.post(`${tk_BASE_URL}`, null, {
-            headers: {'user-id': userId},
-        });
+const users = new SharedArray('users', function () {
+    return Array.from({ length: 1000 }, (_, i) => i + 1);
+});
 
-        const token = res.json().token;
-        if (!token) {
-            console.log('Token generation failed for user userId ');
-        }
-
-        return token;
+function fetchToken(userId) {
+    const queueRes = http.get(`${QUEUE_URL}/position`, {
+        headers: {
+            'user-id': userId,
+        },
     });
 
-    return {tokens};
+    check(queueRes, {
+        'Token fetched': (r) => r.status === 200
+    });
+
+    const token = queueRes.json().token;
+    if (!token) {
+        console.error(`Failed to fetch token for user ${userId}`);
+    }
+    return token;
 }
 
 function fetchSchedule(concertId, token) {
     const scheduleRes = http.get(`${BASE_URL}/${concertId}/schedules`, {
-        headers: {Token: token},
+        headers: { Token: token },
     });
+
     check(scheduleRes, {
-        'Schedule fetched': (r) => r.status === 200,
+        'Concert schedules checked': (r) => r.status === 200,
     });
 
     const schedules = scheduleRes.json().schedules;
@@ -47,12 +62,10 @@ function fetchSchedule(concertId, token) {
 
 function fetchSeats(concertId, scheduleId, token) {
     const seatsRes = http.get(`${BASE_URL}/${concertId}/schedules/${scheduleId}/seats`, {
-        headers: {Token: token},
+        headers: { Token: token },
     });
 
-    check(seatsRes, {
-        'Seats fetched': (r) => r.status === 200,
-    });
+    check(seatsRes, {'Seats availability checked': (r) => r.status === 200});
 
     const seats = seatsRes.json().seats.map((seat) => seat.concertSeatId);
     if (seats.length === 0) {
@@ -79,11 +92,10 @@ function makeReservation(concertId, scheduleId, concertSeatId, userId, token) {
             },
         }
     );
-    check(reservationRes, {
-        'Reservation successful': (r) => r.status === 200,
-    });
 
-    return reservationRes.json().concertReservationId; // 예약 ID 반환
+    check(reservationRes, {'Reservation made': (r) => r.status === 200});
+
+    return reservationRes.json().concertReservationId;
 }
 
 function makePayment(concertId, scheduleId, reservationId, seatId, userId, token) {
@@ -103,33 +115,52 @@ function makePayment(concertId, scheduleId, reservationId, seatId, userId, token
             },
         }
     );
-    check(paymentRes, {
-        'Payment successful': (r) => r.status === 200,
-    });
+
+    check(paymentRes, {'Payment completed': (r) => r.status === 200});
+
 }
 
-export default function ({tokens}) {
+export default function () {
+    const userId = users[Math.floor(Math.random() * users.length)];
 
-    const token = tokens[__VU - 1];
-    const userId = __VU;
+    // Step 1: Fetch token
+    const token = fetchToken(userId);
+
+    if (!token) {
+        console.error('Token fetching failed for user ' + userId);
+        return;
+    }
+
     const concertId = 1;
 
+    // Step 2: Fetch schedule
     const scheduleId = fetchSchedule(concertId, token);
+    if (!scheduleId) {
+        console.error('No schedule available for concert ' + concertId);
+        return;
+    }
     sleep(1);
 
+    // Step 3: Fetch seats
     const seatIds = fetchSeats(concertId, scheduleId, token);
+    if (!seatIds || seatIds.length === 0) {
+        console.error('No seats available for concert ' + concertId + ' and schedule ' + scheduleId);
+        return;
+    }
 
     const seatIndex = Math.floor(Math.random() * seatIds.length);
-
-    const seatId = seatIds[seatIndex]
-
+    const seatId = seatIds[seatIndex];
     sleep(1);
 
+    // Step 4: Make reservation
     const reservationId = makeReservation(concertId, scheduleId, seatId, userId, token);
-
+    if (!reservationId) {
+        console.error('Reservation failed for user ' + userId);
+        return;
+    }
     sleep(2);
 
+    // Step 5: Make payment
     makePayment(concertId, scheduleId, reservationId, seatId, userId, token);
-
     sleep(1);
 }
