@@ -3,7 +3,6 @@
 ### 3. [ERD](https://github.com/seungwontech/hhplus-concert-week3-5/blob/main/docs/ERD.md)
 ### 4. [API](https://github.com/seungwontech/hhplus-concert-week3-5/blob/main/docs/API.md)
 ### 5. [Mock API](https://github.com/seungwontech/hhplus-concert-week3-5/blob/docs/src/main/java/com/hhplus/tdd/app/concert/adapter/controller/ConcertController.java)
-> 리팩토링으로 각 도메인별로 분류하였음.
 
 ### 7. 주요 기술 스택
 - java17
