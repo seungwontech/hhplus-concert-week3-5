@@ -5,9 +5,6 @@
 ### 5. [Mock API](https://github.com/seungwontech/hhplus-concert-week3-5/blob/docs/src/main/java/com/hhplus/tdd/app/concert/adapter/controller/ConcertController.java)
 > 리팩토링으로 각 도메인별로 분류하였음.
 
-### 6. 패키지 구조
-![img_2.png](docs/img_2.png)
-
 ### 7. 주요 기술 스택
 - java17
 - Spring Boot 3.3.4
