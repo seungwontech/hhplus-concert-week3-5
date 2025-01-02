@@ -16,7 +16,7 @@ TDD와 클린 아키텍처를 적용 및 트래픽을 제어와 장애 상황 �
 - 부하 테스트 결과 분석 및 가상 장애 대응 문서 작성
   
 ## 시스템 설계 문서
-- [시퀀스 다이어그램](https://github.com/seungwontech/hhplus-concert-week3-5/blob/main/docs/%EC%8B%9C%ED%80%80%EC%8A%A4%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8.md)
+- [Sequence Diagram](https://github.com/seungwontech/hhplus-concert-week3-5/blob/main/docs/%EC%8B%9C%ED%80%80%EC%8A%A4%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8.md)
 - [ERD](https://github.com/seungwontech/hhplus-concert-week3-5/blob/main/docs/ERD.md)
 
 ## 기술 스택
