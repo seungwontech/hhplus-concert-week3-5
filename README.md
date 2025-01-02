@@ -20,7 +20,7 @@ TDD와 클린 아키텍처를 적용 및 트래픽을 제어와 장애 상황 �
 - [ERD](https://github.com/seungwontech/hhplus-concert-week3-5/blob/main/docs/ERD.md)
 
 ## 기술 스택
-- java17
+- java 17
 - Spring Boot 3.3.4
 - Spring Data JPA 
 - Gradle build
