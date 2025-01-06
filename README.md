@@ -2,7 +2,7 @@
 ## 프로젝트 소개
 TDD와 클린 아키텍처를 적용 및 트래픽을 제어와 장애 상황 대안 방안을 고민 및 구현을 목표로 학습한 프로젝트입니다.
 
-## 작업
+## 학습 내용
 - [글로벌 에러 핸들러, 토큰 검증 인터셉터 구현](https://seungwontech.tistory.com/96)
 - [동시성 이슈 분석 작업과 동시성 제어 고도화](https://seungwontech.tistory.com/91)
 - [쿼리 캐싱를 통해 성능 개선](https://seungwontech.tistory.com/93)
