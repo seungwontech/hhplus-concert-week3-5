@@ -5,7 +5,6 @@ import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertReservationReq;
-import com.hhplus.tdd.concert.presentation.response.ConcertReservationRes;
 import com.hhplus.tdd.config.exception.CoreException;
 import com.hhplus.tdd.config.exception.ErrorType;
 import com.hhplus.tdd.config.redis.DistributedLock;
@@ -53,7 +52,7 @@ public class ConcertReservationUseCase {
     }
 
     @DistributedLock(key = "#concertScheduleId")
-    public ConcertReservationResult execute_di(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
+    public ConcertReservationResult executeRedis(Long concertId, Long concertScheduleId, ConcertReservationReq reservationReq) {
         List<ConcertReservation> reservations = createReservationList(concertScheduleId, reservationReq.getConcertSeatIds(), reservationReq.getUserId());
 
         concertReservationRepository.saveAll(reservations);
@@ -120,7 +119,7 @@ public class ConcertReservationUseCase {
     }
 
     public ConcertReservationResult buildReservationResult(Concert concert, List<ConcertReservation> reservations, Map<Long, ConcertSeat> seatMap) {
-        List<ConcertReservationRes.Seat> seatResponseList = new ArrayList<>();
+        List<ConcertReservationResult.Seat> seatResponseList = new ArrayList<>();
         int totalPrice = 0;
 
         for (ConcertReservation reservation : reservations) {
@@ -128,7 +127,7 @@ public class ConcertReservationUseCase {
             ConcertSeat seatInfo = seatMap.get(reservedSeatId);
 
             if (seatInfo != null) {
-                ConcertReservationRes.Seat seatResponse = ConcertReservationRes.Seat.of(
+                ConcertReservationResult.Seat seatResponse = ConcertReservationResult.Seat.of(
                         seatInfo.getSeatNumber()
                         , reservation.getReservationStatus()
                         , seatInfo.getSeatPrice()
@@ -138,7 +137,7 @@ public class ConcertReservationUseCase {
             }
         }
 
-        return ConcertReservationResult.of(reservations.get(0).getUserId(), concert.getConcertTitle(), seatResponseList, totalPrice);
+        return ConcertReservationResult.of(reservations.get(0).getUserId(), concert.getConcertTitle(), seatResponseList, totalPrice, reservations.get(0).getConcertReservationId());
     }
 
 }

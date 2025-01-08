@@ -138,8 +138,6 @@ public class ConcertPaymentUseCase {
 
         Balance updatedBalance = balance.use(totalPrice);
         balanceRepository.save(updatedBalance);
-
-        balanceRepository.save(balance);
     }
 }
 

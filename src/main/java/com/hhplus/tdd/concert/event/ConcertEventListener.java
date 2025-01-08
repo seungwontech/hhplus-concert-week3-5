@@ -2,7 +2,7 @@ package com.hhplus.tdd.concert.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hhplus.tdd.concert.domain.kafka.MessageProducer;
+import com.hhplus.tdd.concert.domain.event.MessageProducer;
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 import com.hhplus.tdd.concert.domain.model.Outbox;
 import com.hhplus.tdd.concert.domain.service.OutboxService;
