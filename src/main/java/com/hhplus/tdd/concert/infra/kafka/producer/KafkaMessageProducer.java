@@ -2,7 +2,7 @@ package com.hhplus.tdd.concert.infra.kafka.producer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
-import com.hhplus.tdd.concert.domain.kafka.MessageProducer;
+import com.hhplus.tdd.concert.domain.event.MessageProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
