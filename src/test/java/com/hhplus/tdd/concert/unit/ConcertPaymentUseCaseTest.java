@@ -4,7 +4,7 @@ import com.hhplus.tdd.concert.application.usecase.ConcertPaymentUseCase;
 import com.hhplus.tdd.concert.domain.model.ConcertPayment;
 import com.hhplus.tdd.concert.domain.model.ConcertPaymentResult;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
-import com.hhplus.tdd.concert.domain.model.PaymentStatus;
+import com.hhplus.tdd.concert.domain.model.enums.PaymentStatus;
 import com.hhplus.tdd.concert.domain.repository.ConcertPaymentRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;
 import com.hhplus.tdd.concert.presentation.request.ConcertPaymentReq;

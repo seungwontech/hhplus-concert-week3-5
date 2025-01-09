@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert.domain.model;
+package com.hhplus.tdd.concert.domain.model.enums;
 
 public enum ReservationStatus {
     WAITING("예약 대기 중"),
