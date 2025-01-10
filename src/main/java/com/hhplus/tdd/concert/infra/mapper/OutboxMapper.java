@@ -8,23 +8,23 @@ import org.springframework.stereotype.Component;
 public class OutboxMapper {
 
     public Outbox toDomain(OutboxJpaEntity entity) {
-        return Outbox.builder()
-                .id(entity.getId())
-                .payload(entity.getPayload())
-                .topic(entity.getTopic())
-                .createdAt(entity.getCreatedAt())
-                .status(entity.getStatus())
-                .eventId(entity.getEventId())
-                .build();
+        return Outbox.of(
+                entity.getId()
+                , entity.getPayload()
+                , entity.getTopic()
+                , entity.getCreatedAt()
+                , entity.getStatus()
+                , entity.getEventId()
+        );
     }
 
     public OutboxJpaEntity toEntity(Outbox outbox) {
-        return OutboxJpaEntity.builder()
-                .id(outbox.getId())
-                .payload(outbox.getPayload())
-                .topic(outbox.getTopic())
-                .status(outbox.getStatus())
-                .eventId(outbox.getEventId())
-                .build();
+        return OutboxJpaEntity.of(outbox.getId()
+                , outbox.getPayload()
+                , outbox.getTopic()
+                , outbox.getCreatedAt()
+                , outbox.getStatus()
+                , outbox.getEventId()
+        );
     }
 }
