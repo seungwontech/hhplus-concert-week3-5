@@ -81,7 +81,7 @@ public class SeatReservationTest {
             executorService.submit(() -> {
                 try {
                     ConcertReservationReq req = new ConcertReservationReq(1L, seatIds);
-                    concertReservationUseCase.execute_di(concertId, concertScheduleId, req);
+                    concertReservationUseCase.executeRedis(concertId, concertScheduleId, req);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failureCount.incrementAndGet();

@@ -13,12 +13,12 @@ import java.util.List;
 public class ConcertReservationResult {
     private Long userId;
     private String concertName;
-    private List<com.hhplus.tdd.concert.presentation.response.ConcertReservationRes.Seat> seats;
+    private List<Seat> seats;
     private int totalPrice;
+    private Long concertReservationId;
 
-
-    public static ConcertReservationResult of(Long userId, String concertName, List<com.hhplus.tdd.concert.presentation.response.ConcertReservationRes.Seat> seats, int totalPrice) {
-        return new ConcertReservationResult(userId, concertName, seats, totalPrice);
+    public static ConcertReservationResult of(Long userId, String concertName, List<Seat> seats, int totalPrice, Long concertReservationId) {
+        return new ConcertReservationResult(userId, concertName, seats, totalPrice, concertReservationId);
     }
 
     @AllArgsConstructor

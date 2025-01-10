@@ -4,7 +4,7 @@ import com.hhplus.tdd.concert.application.usecase.ConcertReservationUseCase;
 import com.hhplus.tdd.concert.domain.model.ConcertReservation;
 import com.hhplus.tdd.concert.domain.model.ConcertReservationResult;
 import com.hhplus.tdd.concert.domain.model.ConcertSeat;
-import com.hhplus.tdd.concert.domain.model.ReservationStatus;
+import com.hhplus.tdd.concert.domain.model.enums.ReservationStatus;
 import com.hhplus.tdd.concert.domain.repository.ConcertRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertReservationRepository;
 import com.hhplus.tdd.concert.domain.repository.ConcertSeatRepository;

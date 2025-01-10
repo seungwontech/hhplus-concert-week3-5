@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/concerts")
@@ -45,8 +47,14 @@ public class ConcertController {
     public ResponseEntity<ConcertReservationRes> concertReservation(@PathVariable Long concertId
             , @PathVariable Long concertScheduleId
             , @RequestBody ConcertReservationReq concertReservationReq) {
-        ConcertReservationResult res = concertReservationUseCase.execute(concertId, concertScheduleId, concertReservationReq);
-        return ResponseEntity.ok(ConcertReservationRes.of(res.getUserId(), res.getConcertName(), res.getSeats(), res.getTotalPrice()));
+        ConcertReservationResult result = concertReservationUseCase.execute(concertId, concertScheduleId, concertReservationReq);
+
+        // 변환 로직 추가
+        List<ConcertReservationRes.Seat> seats = result.getSeats().stream()
+                .map(seat -> ConcertReservationRes.Seat.of(seat.getSeatNumber(), seat.getStatus(), seat.getSeatPrice()))
+                .toList();
+
+        return ResponseEntity.ok(ConcertReservationRes.of(result.getUserId(), result.getConcertName(), seats, result.getTotalPrice(), result.getConcertReservationId()));
     }
 
     // 콘서트 결제 API

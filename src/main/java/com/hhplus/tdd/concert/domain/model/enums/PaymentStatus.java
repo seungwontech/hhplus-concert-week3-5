@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert.domain.model;
+package com.hhplus.tdd.concert.domain.model.enums;
 
 public enum PaymentStatus {
     FAILED("결제 실패"),

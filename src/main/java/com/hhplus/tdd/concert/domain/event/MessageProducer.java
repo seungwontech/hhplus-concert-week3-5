@@ -1,4 +1,4 @@
-package com.hhplus.tdd.concert.domain.kafka;
+package com.hhplus.tdd.concert.domain.event;
 
 import com.hhplus.tdd.concert.domain.model.ConcertEvent;
 
